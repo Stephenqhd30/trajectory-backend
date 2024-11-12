@@ -1,0 +1,67 @@
+{
+  "aliases": {
+	"user": {}
+  },
+  "mappings": {
+	"properties": {
+	  "id": {
+		"type": "keyword"
+	  },
+	  "userAccount": {
+		"type": "keyword"
+	  },
+	  "userName": {
+		"type": "text",
+		"analyzer": "ik_max_word",
+		"search_analyzer": "ik_smart",
+		"fields": {
+		  "keyword": {
+			"type": "keyword",
+			"ignore_above": 256
+		  }
+		}
+	  },
+	  "userAvatar": {
+		"type": "keyword"
+	  },
+	  "userGender": {
+		"type": "integer"
+	  },
+	  "userProfile": {
+		"type": "text",
+		"analyzer": "ik_max_word",
+		"search_analyzer": "ik_smart",
+		"fields": {
+		  "keyword": {
+			"type": "keyword",
+			"ignore_above": 256
+		  }
+		}
+	  },
+	  "userRole": {
+		"type": "keyword"
+	  },
+	  "userEmail": {
+		"type": "keyword"
+	  },
+	  "userPhone": {
+		"type": "keyword"
+	  },
+	  "tags": {
+		"type": "keyword"
+	  },
+	  "editTime": {
+		"type": "date"
+	  },
+	  "createTime": {
+		"type": "date"
+	  },
+	  "updateTime": {
+		"type": "date"
+	  },
+	  "isDelete": {
+		"type": "keyword"
+	  }
+	}
+  }
+}

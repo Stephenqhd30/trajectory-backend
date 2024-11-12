@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stephen.popcorn.mapper.LogFilesMapper">
+
+	<resultMap id="BaseResultMap" type="com.stephen.trajectory.model.entity.LogFiles">
+		<id property="id" column="id" jdbcType="BIGINT"/>
+		<result property="fileKey" column="fileKey" jdbcType="VARCHAR"/>
+		<result property="fileName" column="fileName" jdbcType="VARCHAR"/>
+		<result property="fileOriginalName" column="fileOriginalName" jdbcType="VARCHAR"/>
+		<result property="fileSuffix" column="fileSuffix" jdbcType="VARCHAR"/>
+		<result property="fileSize" column="fileSize" jdbcType="BIGINT"/>
+		<result property="fileUrl" column="fileUrl" jdbcType="VARCHAR"/>
+		<result property="fileOssType" column="fileOssType" jdbcType="VARCHAR"/>
+		<result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id
+		,fileKey,fileName,
+        fileOriginalName,fileSuffix,fileSize,
+        fileUrl,fileOssType,createTime
+	</sql>
+</mapper>

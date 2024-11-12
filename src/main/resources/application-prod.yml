@@ -1,0 +1,62 @@
+# 线上配置文件
+# @author stephen qiu
+#
+spring:
+  application:
+    name: learning-backend
+  config:
+    activate:
+      on-profile: prod
+  # 支持 swagger3
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  # 数据库配置
+  # todo 需替换配置
+  datasource:
+    driver-class-name: ${prod.mysql.datasource.driver-class-name}
+    url: ${prod.mysql.datasource.url}
+    username: ${prod.mysql.datasource.username}
+    password: ${prod.mysql.datasource.password}
+  # Redis 配置
+  # todo 需替换配置
+  redis:
+    database: ${prod.redis.database}
+    host: ${prod.redis.host}
+    port: ${prod.redis.port}
+    timeout: ${prod.redis.timeout}
+    password: ${prod.redis.password}
+  # 文件上传
+  servlet:
+    multipart:
+      # 大小限制
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+    session:
+      cookie:
+        max-age: 2592000
+        domain: 1.13.163.104
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+    # 生产环境关闭日志
+    log-impl: ''
+  global-config:
+    db-config:
+      logic-delete-field: isDelete # 全局逻辑删除的实体字段名
+      logic-delete-value: 1 # 逻辑已删除值（默认为 1）
+      logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
+# 对象存储
+cos:
+  client:
+    accessKey: ${prod.cos.client.accessKey}
+    secretKey: ${prod.cos.client.secretKey}
+    region: ${prod.cos.client.region}
+    bucket: ${prod.cos.client.bucket}
