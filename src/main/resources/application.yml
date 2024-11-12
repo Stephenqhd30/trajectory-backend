@@ -130,3 +130,11 @@ oss:
     secret-key: xxxxxxxx
     # 桶名称
     bucket-name: xxxxxxxx
+
+
+# 讯飞星火api
+xunfei:
+  client:
+    appid: ${dev.xunfei.client.appid}
+    api-key: ${dev.xunfei.client.api-key}
+    api-secret: ${dev.xunfei.client.api-secret}

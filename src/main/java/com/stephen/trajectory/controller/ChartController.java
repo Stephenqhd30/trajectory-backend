@@ -5,18 +5,19 @@ import com.stephen.trajectory.annotation.AuthCheck;
 import com.stephen.trajectory.common.*;
 import com.stephen.trajectory.constants.UserConstant;
 import com.stephen.trajectory.exception.BusinessException;
-import com.stephen.trajectory.model.dto.chart.ChartAddRequest;
-import com.stephen.trajectory.model.dto.chart.ChartEditRequest;
-import com.stephen.trajectory.model.dto.chart.ChartQueryRequest;
-import com.stephen.trajectory.model.dto.chart.ChartUpdateRequest;
+import com.stephen.trajectory.manager.ai.AIManager;
+import com.stephen.trajectory.model.dto.chart.*;
 import com.stephen.trajectory.model.entity.Chart;
 import com.stephen.trajectory.model.entity.User;
 import com.stephen.trajectory.model.vo.ChartVO;
 import com.stephen.trajectory.service.ChartService;
 import com.stephen.trajectory.service.UserService;
+import com.stephen.trajectory.utils.document.excel.ExcelUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +37,9 @@ public class ChartController {
 	
 	@Resource
 	private UserService userService;
+	
+	@Resource
+	private AIManager aiManager;
 
 // region 增删改查
 	
@@ -79,8 +83,7 @@ public class ChartController {
 	 * <Boolean>}
 	 */
 	@PostMapping("/delete")
-	public BaseResponse
-			<Boolean> deleteChart(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+	public BaseResponse<Boolean> deleteChart(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
 		if (deleteRequest == null || deleteRequest.getId() <= 0) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
 		}
@@ -108,8 +111,7 @@ public class ChartController {
 	 */
 	@PostMapping("/update")
 	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-	public BaseResponse
-			<Boolean> updateChart(@RequestBody ChartUpdateRequest chartUpdateRequest) {
+	public BaseResponse<Boolean> updateChart(@RequestBody ChartUpdateRequest chartUpdateRequest) {
 		if (chartUpdateRequest == null || chartUpdateRequest.getId() <= 0) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
 		}
@@ -257,4 +259,62 @@ public class ChartController {
 	}
 	
 	// endregion
+	
+	/**
+	 * 通过生成图表
+	 *
+	 * @param multipartFile       multipartFile
+	 * @param genChartByAiRequest genChartByAiRequest
+	 * @param request             request
+	 * @return
+	 */
+	@PostMapping("/gen")
+	public BaseResponse<BIResponse> genChartBtAi(@RequestPart("file") MultipartFile multipartFile,
+	                                             GenChartByAiRequest genChartByAiRequest, HttpServletRequest request) {
+		String goal = genChartByAiRequest.getGoal();
+		String name = genChartByAiRequest.getName();
+		String chartType = genChartByAiRequest.getChartType();
+		// 检验目标
+		ThrowUtils.throwIf(StringUtils.isBlank(goal), ErrorCode.PARAMS_ERROR, "分析目标为空");
+		// 校验名称
+		ThrowUtils.throwIf(StringUtils.isBlank(name) && name.length() > 100, ErrorCode.PARAMS_ERROR, "目标名称过长");
+		// 需要用户登录才能调用接口
+		User loginUser = userService.getLoginUser(request);
+		// 构造用户输入
+		StringBuilder userInput = new StringBuilder();
+		userInput.append("分析需求: ").append("\n");
+		// 拼接分析目标
+		String userGoal = goal;
+		if (StringUtils.isNotBlank(goal)) {
+			userGoal = ". 请使用" + chartType + "生成可视化数据";
+		}
+		userInput.append(userGoal).append("\n");
+		userInput.append("原始数据: ").append("\n");
+		// 压缩之后的数据
+		String excelToCsv = ExcelUtils.excelToCsv(multipartFile);
+		userInput.append(excelToCsv).append("\n");
+		String result = aiManager.doChat(userInput.toString());
+		result = result.replaceAll("```json", "").replaceAll("```", "").trim();
+		String[] split = result.split("【【【【【");
+		String genChart = split[1];
+		String genResult = split[2];
+		if (split.length > 3) {
+			throw new BusinessException(ErrorCode.PARAMS_ERROR, "AI 生成错误");
+		}
+		Chart chart = new Chart();
+		chart.setGoal(goal);
+		chart.setName(name);
+		chart.setChartData(excelToCsv);
+		chart.setChartType(chartType);
+		chart.setUserId(loginUser.getId());
+		chart.setGenChart(genChart);
+		chart.setGenResult(genResult);
+		// 数据入库
+		boolean saveResult = chartService.save(chart);
+		ThrowUtils.throwIf(!saveResult, ErrorCode.SYSTEM_ERROR, "数据保存失败");
+		BIResponse biResponse = new BIResponse();
+		biResponse.setGenChart(genChart);
+		biResponse.setGenResult(genResult);
+		return ResultUtils.success(biResponse);
+	}
 }

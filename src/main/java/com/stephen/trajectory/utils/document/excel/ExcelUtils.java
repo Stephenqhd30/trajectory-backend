@@ -1,21 +1,30 @@
 package com.stephen.trajectory.utils.document.excel;
 
+import cn.hutool.core.collection.CollUtil;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.exception.BusinessException;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Excel 工具类，提供 Excel 文件的创建、响应设置等功能
  *
  * @author stephen qiu
  */
+@Slf4j
 public class ExcelUtils {
 	
 	/**
@@ -84,5 +93,42 @@ public class ExcelUtils {
 		// 使用指定格式转换日期为字符串
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return sdf.format(date);
+	}
+	
+	/**
+	 * 将 excel 文件转换为 csv
+	 *
+	 * @param multipartFile multipartFile
+	 * @return {@link String}
+	 */
+	public static String excelToCsv(MultipartFile multipartFile) {
+		List<Map<Integer, String>> list = null;
+		try {
+			list = EasyExcel.read(multipartFile.getInputStream())
+					.excelType(ExcelTypeEnum.XLSX)
+					.sheet()
+					.headRowNumber(0)
+					.doReadSync();
+		} catch (IOException e) {
+			log.error("表格处理错误 :{}", e.getMessage());
+			throw new RuntimeException(e);
+		}
+		
+		if (CollUtil.isEmpty(list)) {
+			return "";
+		}
+		// 转换为 csv
+		StringBuilder stringBuilder = new StringBuilder();
+		// 读取表头
+		LinkedHashMap<Integer, String> headerMap = (LinkedHashMap) list.get(0);
+		List<String> headerList = headerMap.values().stream().filter(ObjectUtils::isNotEmpty).collect(Collectors.toList());
+		stringBuilder.append(StringUtils.join(headerList, ",")).append("\n");
+		// 读取数据
+		for (int i = 1; i < list.size(); i++) {
+			LinkedHashMap<Integer, String> dataMap = (LinkedHashMap) list.get(i);
+			List<String> dataList = dataMap.values().stream().filter(ObjectUtils::isNotEmpty).collect(Collectors.toList());
+			stringBuilder.append(StringUtils.join(dataList, ",")).append("\n");
+		}
+		return stringBuilder.toString();
 	}
 }
