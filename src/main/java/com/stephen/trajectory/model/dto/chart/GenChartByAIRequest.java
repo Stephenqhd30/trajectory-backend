@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author stephen qiu
  */
 @Data
-public class GenChartByAiRequest implements Serializable {
+public class GenChartByAIRequest implements Serializable {
 	
 	private static final long serialVersionUID = -1193592573887027535L;
 	

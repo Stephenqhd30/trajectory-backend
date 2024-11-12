@@ -264,29 +264,25 @@ public class ChartController {
 	 * 通过生成图表
 	 *
 	 * @param multipartFile       multipartFile
-	 * @param genChartByAiRequest genChartByAiRequest
+	 * @param genChartByAIRequest genChartByAIRequest
 	 * @param request             request
-	 * @return
+	 * @return {@link BaseResponse <{@link BIResponse}> }
 	 */
 	@PostMapping("/gen")
-	public BaseResponse<BIResponse> genChartBtAi(@RequestPart("file") MultipartFile multipartFile,
-	                                             GenChartByAiRequest genChartByAiRequest, HttpServletRequest request) {
-		String goal = genChartByAiRequest.getGoal();
-		String name = genChartByAiRequest.getName();
-		String chartType = genChartByAiRequest.getChartType();
-		// 检验目标
-		ThrowUtils.throwIf(StringUtils.isBlank(goal), ErrorCode.PARAMS_ERROR, "分析目标为空");
-		// 校验名称
-		ThrowUtils.throwIf(StringUtils.isBlank(name) && name.length() > 100, ErrorCode.PARAMS_ERROR, "目标名称过长");
+	public BaseResponse<BIResponse> generateChartByAI(@RequestPart("file") MultipartFile multipartFile,
+	                                                  GenChartByAIRequest genChartByAIRequest, HttpServletRequest request) {
+		Chart chart = new Chart();
+		BeanUtils.copyProperties(genChartByAIRequest, chart);
+		chartService.validChart(chart, true);
 		// 需要用户登录才能调用接口
 		User loginUser = userService.getLoginUser(request);
 		// 构造用户输入
 		StringBuilder userInput = new StringBuilder();
 		userInput.append("分析需求: ").append("\n");
 		// 拼接分析目标
-		String userGoal = goal;
-		if (StringUtils.isNotBlank(goal)) {
-			userGoal = ". 请使用" + chartType + "生成可视化数据";
+		String userGoal = chart.getGoal();
+		if (StringUtils.isNotBlank(userGoal)) {
+			userGoal = ". 请使用" + chart.getChartType() + "生成可视化数据";
 		}
 		userInput.append(userGoal).append("\n");
 		userInput.append("原始数据: ").append("\n");
@@ -301,11 +297,8 @@ public class ChartController {
 		if (split.length > 3) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR, "AI 生成错误");
 		}
-		Chart chart = new Chart();
-		chart.setGoal(goal);
-		chart.setName(name);
+		// todo 填充默认数据
 		chart.setChartData(excelToCsv);
-		chart.setChartType(chartType);
 		chart.setUserId(loginUser.getId());
 		chart.setGenChart(genChart);
 		chart.setGenResult(genResult);

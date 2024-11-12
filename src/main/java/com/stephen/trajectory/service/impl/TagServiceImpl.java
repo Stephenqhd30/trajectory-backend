@@ -143,7 +143,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 			return tagVOPage;
 		}
 		// 1. 异步获取对象列表 => 封装对象列表
-		CompletableFuture<List<TagVO>> tagListFurture = CompletableFuture.supplyAsync(() -> tagList.stream().map(TagVO::objToVo).collect(Collectors.toList()));
+		CompletableFuture<List<TagVO>> tagListFuture = CompletableFuture.supplyAsync(() -> tagList.stream().map(TagVO::objToVo).collect(Collectors.toList()));
 		// 2. 异步获取用户信息 => 封装用户信息
 		CompletableFuture<Map<Long, List<User>>> userMapFurture = CompletableFuture.supplyAsync(() -> {
 			Set<Long> userIdSet = tagList.stream().map(Tag::getUserId).collect(Collectors.toSet());
@@ -154,7 +154,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 		
 		try {
 			// todo 可以根据需要为封装对象补充值，不需要的内容可以删除
-			List<TagVO> tagVOList = tagListFurture.get();
+			List<TagVO> tagVOList = tagListFuture.get();
 			// 1. 关联查询用户信息
 			Map<Long, List<User>> userIdUserListMap = userMapFurture.get();
 			// 填充信息

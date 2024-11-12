@@ -62,8 +62,7 @@ public class ChartServiceImpl extends ServiceImpl
 		// 创建数据时，参数不能为空
 		if (add) {
 			// todo 补充校验规则
-			ThrowUtils.throwIf(StringUtils.isAnyBlank(goal, name, chartData, chartType),
-					ErrorCode.PARAMS_ERROR, "参数不能为空");
+			ThrowUtils.throwIf(StringUtils.isAnyBlank(goal, name, chartType), ErrorCode.PARAMS_ERROR, "参数不能为空");
 		}
 		// 修改数据时，有参数则校验
 		// todo 补充校验规则
