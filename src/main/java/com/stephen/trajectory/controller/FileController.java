@@ -59,7 +59,7 @@ public class FileController {
 		User loginUser = userService.getLoginUser(request);
 		
 		// 文件目录：根据业务、用户来划分
-		String path = String.format("/%s/%s/%s", "stephen", fileUploadBizEnum.getValue(), loginUser.getId());
+		String path = String.format("/%s/%s/%s", "trajectory", fileUploadBizEnum.getValue(), loginUser.getId());
 		
 		try {
 			// 直接上传文件

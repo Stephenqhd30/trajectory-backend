@@ -9,7 +9,7 @@ import ${packageName}.common.ErrorCode;
 import ${packageName}.common.ResultUtils;
 import ${packageName}.constants.UserConstant;
 import ${packageName}.exception.BusinessException;
-import ${packageName}.common.utils.ThrowUtils;
+import ${packageName}.common.ThrowUtils;
 import ${packageName}.model.dto.${dataKey}.${upperDataKey}AddRequest;
 import ${packageName}.model.dto.${dataKey}.${upperDataKey}EditRequest;
 import ${packageName}.model.dto.${dataKey}.${upperDataKey}QueryRequest;
@@ -27,43 +27,41 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
-* ${dataName}接口
-*
-* @author stephen qiu
-*/
+ * ${dataName}接口
+ *
+ * @author stephen qiu
+ */
 @RestController
 @RequestMapping("/${dataKey}")
 @Slf4j
 public class ${upperDataKey}Controller {
 
-@Resource
-private ${upperDataKey}Service ${dataKey}Service;
+    @Resource
+    private ${upperDataKey}Service ${dataKey}Service;
 
-@Resource
-private UserService userService;
+    @Resource
+    private UserService userService;
 
-// region 增删改查
+    // region 增删改查
 
-/**
-* 创建${dataName}
-*
-* @param ${dataKey}AddRequest ${dataKey}AddRequest
-* @param request request
-* @return {@link BaseResponse
-<Long>}
-    */
+    /**
+     * 创建${dataName}
+     *
+     * @param ${dataKey}AddRequest ${dataKey}AddRequest
+     * @param request request
+     * @return {@link BaseResponse<Long>}
+     */
     @PostMapping("/add")
-    public BaseResponse
-    <Long> add${upperDataKey}(@RequestBody ${upperDataKey}AddRequest ${dataKey}AddRequest, HttpServletRequest request) {
+    public BaseResponse<Long> add${upperDataKey}(@RequestBody ${upperDataKey}AddRequest ${dataKey}AddRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(${dataKey}AddRequest == null, ErrorCode.PARAMS_ERROR);
         // todo 在此处将实体类和 DTO 进行转换
         ${upperDataKey} ${dataKey} = new ${upperDataKey}();
         BeanUtils.copyProperties(${dataKey}AddRequest, ${dataKey});
         // 数据校验
         try {
-        ${dataKey}Service.valid${upperDataKey}(${dataKey}, true);
+            ${dataKey}Service.valid${upperDataKey}(${dataKey}, true);
         } catch (Exception e) {
-        throw new BusinessException(ErrorCode.PARAMS_ERROR, e.getMessage());
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, e.getMessage());
         }
         // todo 填充默认值
         User loginUser = userService.getLoginUser(request);
@@ -74,210 +72,176 @@ private UserService userService;
         // 返回新写入的数据 id
         long new${upperDataKey}Id = ${dataKey}.getId();
         return ResultUtils.success(new${upperDataKey}Id);
+    }
+
+    /**
+     * 删除${dataName}
+     *
+     * @param deleteRequest deleteRequest
+     * @param request request
+     * @return {@link BaseResponse<Boolean>}
+     */
+    @PostMapping("/delete")
+    public BaseResponse<Boolean> delete${upperDataKey}(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        User user = userService.getLoginUser(request);
+        long id = deleteRequest.getId();
+        // 判断是否存在
+        ${upperDataKey} old${upperDataKey} = ${dataKey}Service.getById(id);
+        ThrowUtils.throwIf(old${upperDataKey} == null, ErrorCode.NOT_FOUND_ERROR);
+        // 仅本人或管理员可删除
+        if (!old${upperDataKey}.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+        // 操作数据库
+        boolean result = ${dataKey}Service.removeById(id);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
 
-        /**
-        * 删除${dataName}
-        *
-        * @param deleteRequest deleteRequest
-        * @param request request
-        * @return {@link BaseResponse
-        <Boolean>}
-            */
-            @PostMapping("/delete")
-            public BaseResponse
-            <Boolean> delete${upperDataKey}(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
-                if (deleteRequest == null || deleteRequest.getId() <= 0) {
-                throw new BusinessException(ErrorCode.PARAMS_ERROR);
-                }
-                User user = userService.getLoginUser(request);
-                long id = deleteRequest.getId();
-                // 判断是否存在
-                ${upperDataKey} old${upperDataKey} = ${dataKey}Service.getById(id);
-                ThrowUtils.throwIf(old${upperDataKey} == null, ErrorCode.NOT_FOUND_ERROR);
-                // 仅本人或管理员可删除
-                if (!old${upperDataKey}.getUserId().equals(user.getId()) && !userService.isAdmin(request)) {
-                throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-                }
-                // 操作数据库
-                boolean result = ${dataKey}Service.removeById(id);
-                ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-                return ResultUtils.success(true);
-                }
+    /**
+     * 更新${dataName}（仅管理员可用）
+     *
+     * @param ${dataKey}UpdateRequest ${dataKey}UpdateRequest
+     * @return {@link BaseResponse<Boolean>}
+     */
+    @PostMapping("/update")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> update${upperDataKey}(@RequestBody ${upperDataKey}UpdateRequest ${dataKey}UpdateRequest) {
+        if (${dataKey}UpdateRequest == null || ${dataKey}UpdateRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // todo 在此处将实体类和 DTO 进行转换
+        ${upperDataKey} ${dataKey} = new ${upperDataKey}();
+        BeanUtils.copyProperties(${dataKey}UpdateRequest, ${dataKey});
+        // 数据校验
+        try {
+            ${dataKey}Service.valid${upperDataKey}(${dataKey}, false);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, e.getMessage());
+        }
+        // 判断是否存在
+        long id = ${dataKey}UpdateRequest.getId();
+        ${upperDataKey} old${upperDataKey} = ${dataKey}Service.getById(id);
+        ThrowUtils.throwIf(old${upperDataKey} == null, ErrorCode.NOT_FOUND_ERROR);
+        // 操作数据库
+        boolean result = ${dataKey}Service.updateById(${dataKey});
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
 
-                /**
-                * 更新${dataName}（仅管理员可用）
-                *
-                * @param ${dataKey}UpdateRequest ${dataKey}UpdateRequest
-                * @return {@link BaseResponse
-                <Boolean>}
-                    */
-                    @PostMapping("/update")
-                    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-                    public BaseResponse
-                    <Boolean> update${upperDataKey}(@RequestBody ${upperDataKey}UpdateRequest ${dataKey}UpdateRequest) {
-                        if (${dataKey}UpdateRequest == null || ${dataKey}UpdateRequest.getId() <= 0) {
-                        throw new BusinessException(ErrorCode.PARAMS_ERROR);
-                        }
-                        // todo 在此处将实体类和 DTO 进行转换
-                        ${upperDataKey} ${dataKey} = new ${upperDataKey}();
-                        BeanUtils.copyProperties(${dataKey}UpdateRequest, ${dataKey});
-                        // 数据校验
-                        try {
-                        ${dataKey}Service.valid${upperDataKey}(${dataKey}, false);
-                        } catch (Exception e) {
-                        throw new BusinessException(ErrorCode.PARAMS_ERROR, e.getMessage());
-                        }
-                        // 判断是否存在
-                        long id = ${dataKey}UpdateRequest.getId();
-                        ${upperDataKey} old${upperDataKey} = ${dataKey}Service.getById(id);
-                        ThrowUtils.throwIf(old${upperDataKey} == null, ErrorCode.NOT_FOUND_ERROR);
-                        // 操作数据库
-                        boolean result = ${dataKey}Service.updateById(${dataKey});
-                        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-                        return ResultUtils.success(true);
-                        }
+    /**
+     * 根据 id 获取${dataName}（封装类）
+     *
+     * @param id id
+     * @return {@link BaseResponse<${upperDataKey}VO>}
+     */
+    @GetMapping("/get/vo")
+    public BaseResponse<${upperDataKey}VO> get${upperDataKey}VOById(long id, HttpServletRequest request) {
+        ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
+        // 查询数据库
+        ${upperDataKey} ${dataKey} = ${dataKey}Service.getById(id);
+        ThrowUtils.throwIf(${dataKey} == null, ErrorCode.NOT_FOUND_ERROR);
+        // 获取封装类
+        return ResultUtils.success(${dataKey}Service.get${upperDataKey}VO(${dataKey}, request));
+    }
 
-                        /**
-                        * 根据 id 获取${dataName}（封装类）
-                        *
-                        * @param id id
-                        * @return {@link BaseResponse
-                        <${upperDataKey}VO>}
-                            */
-                            @GetMapping("/get/vo")
-                            public BaseResponse
-                            <${upperDataKey}VO> get${upperDataKey}VOById(long id, HttpServletRequest request) {
-                                ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
-                                // 查询数据库
-                                ${upperDataKey} ${dataKey} = ${dataKey}Service.getById(id);
-                                ThrowUtils.throwIf(${dataKey} == null, ErrorCode.NOT_FOUND_ERROR);
-                                // 获取封装类
-                                return ResultUtils.success(${dataKey}Service.get${upperDataKey}VO(${dataKey}, request));
-                                }
+    /**
+     * 分页获取${dataName}列表（仅管理员可用）
+     *
+     * @param ${dataKey}QueryRequest ${dataKey}QueryRequest
+     * @return {@link BaseResponse<Page<${upperDataKey}>>}
+     */
+    @PostMapping("/list/page")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Page<${upperDataKey}>> list${upperDataKey}ByPage(@RequestBody ${upperDataKey}QueryRequest ${dataKey}QueryRequest) {
+        long current = ${dataKey}QueryRequest.getCurrent();
+        long size = ${dataKey}QueryRequest.getPageSize();
+        // 查询数据库
+        Page<${upperDataKey}> ${dataKey}Page = ${dataKey}Service.page(new Page<>(current, size),
+                ${dataKey}Service.getQueryWrapper(${dataKey}QueryRequest));
+        return ResultUtils.success(${dataKey}Page);
+    }
 
-                                /**
-                                * 分页获取${dataName}列表（仅管理员可用）
-                                *
-                                * @param ${dataKey}QueryRequest ${dataKey}QueryRequest
-                                * @return {@link BaseResponse
-                                <Page
-                                <${upperDataKey}>>}
-                                */
-                                @PostMapping("/list/page")
-                                @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-                                public BaseResponse
-                                <Page
-                                <${upperDataKey}>> list${upperDataKey}ByPage(@RequestBody ${upperDataKey}
-                                QueryRequest ${dataKey}QueryRequest) {
-                                long current = ${dataKey}QueryRequest.getCurrent();
-                                long size = ${dataKey}QueryRequest.getPageSize();
-                                // 查询数据库
-                                Page<${upperDataKey}> ${dataKey}Page = ${dataKey}Service.page(new Page<>(current, size),
-                                ${dataKey}Service.getQueryWrapper(${dataKey}QueryRequest));
-                                return ResultUtils.success(${dataKey}Page);
-                                }
+    /**
+     * 分页获取${dataName}列表（封装类）
+     *
+     * @param ${dataKey}QueryRequest ${dataKey}QueryRequest
+     * @param request request
+     * @return {@link BaseResponse<Page<${upperDataKey}VO>>}
+     */
+    @PostMapping("/list/page/vo")
+    public BaseResponse<Page<${upperDataKey}VO>> list${upperDataKey}VOByPage(@RequestBody ${upperDataKey}QueryRequest ${dataKey}QueryRequest,
+                                                               HttpServletRequest request) {
+        long current = ${dataKey}QueryRequest.getCurrent();
+        long size = ${dataKey}QueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        // 查询数据库
+        Page<${upperDataKey}> ${dataKey}Page = ${dataKey}Service.page(new Page<>(current, size),
+                ${dataKey}Service.getQueryWrapper(${dataKey}QueryRequest));
+        // 获取封装类
+        return ResultUtils.success(${dataKey}Service.get${upperDataKey}VOPage(${dataKey}Page, request));
+    }
 
-                                /**
-                                * 分页获取${dataName}列表（封装类）
-                                *
-                                * @param ${dataKey}QueryRequest ${dataKey}QueryRequest
-                                * @param request request
-                                * @return {@link BaseResponse
-                                <Page
-                                <${upperDataKey}VO>>}
-                                    */
-                                    @PostMapping("/list/page/vo")
-                                    public BaseResponse
-                                    <Page
-                                    <${upperDataKey}VO>> list${upperDataKey}VOByPage(@RequestBody ${upperDataKey}
-                                        QueryRequest ${dataKey}QueryRequest,
-                                        HttpServletRequest request) {
-                                        long current = ${dataKey}QueryRequest.getCurrent();
-                                        long size = ${dataKey}QueryRequest.getPageSize();
-                                        // 限制爬虫
-                                        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-                                        // 查询数据库
-                                        Page<${upperDataKey}> ${dataKey}Page = ${dataKey}Service.page(new
-                                        Page<>(current, size),
-                                        ${dataKey}Service.getQueryWrapper(${dataKey}QueryRequest));
-                                        // 获取封装类
-                                        return ResultUtils.success(${dataKey}Service.get${upperDataKey}VOPage(${dataKey}
-                                        Page, request));
-                                        }
+    /**
+     * 分页获取当前登录用户创建的${dataName}列表
+     *
+     * @param ${dataKey}QueryRequest ${dataKey}QueryRequest
+     * @param request request
+     * @return {@link BaseResponse<Page<${upperDataKey}VO>>}
+     */
+    @PostMapping("/my/list/page/vo")
+    public BaseResponse<Page<${upperDataKey}VO>> listMy${upperDataKey}VOByPage(@RequestBody ${upperDataKey}QueryRequest ${dataKey}QueryRequest,
+                                                                 HttpServletRequest request) {
+        ThrowUtils.throwIf(${dataKey}QueryRequest == null, ErrorCode.PARAMS_ERROR);
+        // 补充查询条件，只查询当前登录用户的数据
+        User loginUser = userService.getLoginUser(request);
+        ${dataKey}QueryRequest.setUserId(loginUser.getId());
+        long current = ${dataKey}QueryRequest.getCurrent();
+        long size = ${dataKey}QueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        // 查询数据库
+        Page<${upperDataKey}> ${dataKey}Page = ${dataKey}Service.page(new Page<>(current, size),
+                ${dataKey}Service.getQueryWrapper(${dataKey}QueryRequest));
+        // 获取封装类
+        return ResultUtils.success(${dataKey}Service.get${upperDataKey}VOPage(${dataKey}Page, request));
+    }
 
-                                        /**
-                                        * 分页获取当前登录用户创建的${dataName}列表
-                                        *
-                                        * @param ${dataKey}QueryRequest ${dataKey}QueryRequest
-                                        * @param request request
-                                        * @return {@link BaseResponse
-                                        <Page
-                                        <${upperDataKey}VO>>}
-                                            */
-                                            @PostMapping("/my/list/page/vo")
-                                            public BaseResponse
-                                            <Page
-                                            <${upperDataKey}VO>> listMy${upperDataKey}
-                                                VOByPage(@RequestBody ${upperDataKey}QueryRequest ${dataKey}
-                                                QueryRequest,
-                                                HttpServletRequest request) {
-                                                ThrowUtils.throwIf(${dataKey}QueryRequest == null,
-                                                ErrorCode.PARAMS_ERROR);
-                                                // 补充查询条件，只查询当前登录用户的数据
-                                                User loginUser = userService.getLoginUser(request);
-                                                ${dataKey}QueryRequest.setUserId(loginUser.getId());
-                                                long current = ${dataKey}QueryRequest.getCurrent();
-                                                long size = ${dataKey}QueryRequest.getPageSize();
-                                                // 限制爬虫
-                                                ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-                                                // 查询数据库
-                                                Page<${upperDataKey}> ${dataKey}Page = ${dataKey}Service.page(new
-                                                Page<>(current, size),
-                                                ${dataKey}Service.getQueryWrapper(${dataKey}QueryRequest));
-                                                // 获取封装类
-                                                return ResultUtils.success(${dataKey}Service.get${upperDataKey}
-                                                VOPage(${dataKey}Page, request));
-                                                }
+    /**
+     * 编辑${dataName}（给用户使用）
+     *
+     * @param ${dataKey}EditRequest ${dataKey}EditRequest
+     * @param request request
+     * @return {@link BaseResponse<Boolean>}
+     */
+    @PostMapping("/edit")
+    public BaseResponse<Boolean> edit${upperDataKey}(@RequestBody ${upperDataKey}EditRequest ${dataKey}EditRequest, HttpServletRequest request) {
+        if (${dataKey}EditRequest == null || ${dataKey}EditRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // todo 在此处将实体类和 DTO 进行转换
+        ${upperDataKey} ${dataKey} = new ${upperDataKey}();
+        BeanUtils.copyProperties(${dataKey}EditRequest, ${dataKey});
+        // 数据校验
+        ${dataKey}Service.valid${upperDataKey}(${dataKey}, false);
+        User loginUser = userService.getLoginUser(request);
+        // 判断是否存在
+        long id = ${dataKey}EditRequest.getId();
+        ${upperDataKey} old${upperDataKey} = ${dataKey}Service.getById(id);
+        ThrowUtils.throwIf(old${upperDataKey} == null, ErrorCode.NOT_FOUND_ERROR);
+        // 仅本人或管理员可编辑
+        if (!old${upperDataKey}.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+        // 操作数据库
+        boolean result = ${dataKey}Service.updateById(${dataKey});
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
 
-                                                /**
-                                                * 编辑${dataName}（给用户使用）
-                                                *
-                                                * @param ${dataKey}EditRequest ${dataKey}EditRequest
-                                                * @param request request
-                                                * @return {@link BaseResponse
-                                                <Boolean>}
-                                                    */
-                                                    @PostMapping("/edit")
-                                                    public BaseResponse
-                                                    <Boolean> edit${upperDataKey}(@RequestBody ${upperDataKey}
-                                                        EditRequest ${dataKey}EditRequest, HttpServletRequest request) {
-                                                        if (${dataKey}EditRequest == null || ${dataKey}
-                                                        EditRequest.getId() <= 0) {
-                                                        throw new BusinessException(ErrorCode.PARAMS_ERROR);
-                                                        }
-                                                        // todo 在此处将实体类和 DTO 进行转换
-                                                        ${upperDataKey} ${dataKey} = new ${upperDataKey}();
-                                                        BeanUtils.copyProperties(${dataKey}EditRequest, ${dataKey});
-                                                        // 数据校验
-                                                        ${dataKey}Service.valid${upperDataKey}(${dataKey}, false);
-                                                        User loginUser = userService.getLoginUser(request);
-                                                        // 判断是否存在
-                                                        long id = ${dataKey}EditRequest.getId();
-                                                        ${upperDataKey} old${upperDataKey} = ${dataKey}
-                                                        Service.getById(id);
-                                                        ThrowUtils.throwIf(old${upperDataKey} == null,
-                                                        ErrorCode.NOT_FOUND_ERROR);
-                                                        // 仅本人或管理员可编辑
-                                                        if (!old${upperDataKey}.getUserId().equals(loginUser.getId()) &&
-                                                        !userService.isAdmin(loginUser)) {
-                                                        throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-                                                        }
-                                                        // 操作数据库
-                                                        boolean result = ${dataKey}Service.updateById(${dataKey});
-                                                        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-                                                        return ResultUtils.success(true);
-                                                        }
-
-                                                        // endregion
-                                                        }
+    // endregion
+}
