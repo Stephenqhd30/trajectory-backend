@@ -38,8 +38,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class ChartServiceImpl extends ServiceImpl
-		<ChartMapper, Chart> implements ChartService {
+public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart> implements ChartService {
 	
 	@Resource
 	private UserService userService;

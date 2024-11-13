@@ -263,14 +263,17 @@ public class ChartController {
 	/**
 	 * 通过生成图表
 	 *
-	 * @param multipartFile       multipartFile
-	 * @param genChartByAIRequest genChartByAIRequest
-	 * @param request             request
-	 * @return {@link BaseResponse <{@link BIResponse}> }
+	 * @param multipartFile       上传的Excel文件
+	 * @param genChartByAIRequest 生成图表请求对象
+	 * @param request             HTTP请求对象
+	 * @return {@link BaseResponse <{@link BIResponse}>}
 	 */
 	@PostMapping("/gen")
 	public BaseResponse<BIResponse> generateChartByAI(@RequestPart("file") MultipartFile multipartFile,
-	                                                  GenChartByAIRequest genChartByAIRequest, HttpServletRequest request) {
+	                                                  GenChartByAIRequest genChartByAIRequest,
+	                                                  HttpServletRequest request) {
+		
+		// 验证用户和请求参数
 		Chart chart = new Chart();
 		BeanUtils.copyProperties(genChartByAIRequest, chart);
 		chartService.validChart(chart, true);
@@ -279,35 +282,54 @@ public class ChartController {
 		// 构造用户输入
 		StringBuilder userInput = new StringBuilder();
 		userInput.append("分析需求: ").append("\n");
+		
 		// 拼接分析目标
 		String userGoal = chart.getGoal();
 		if (StringUtils.isNotBlank(userGoal)) {
-			userGoal = ". 请使用" + chart.getChartType() + "生成可视化数据";
+			userInput.append(userGoal)
+					.append(",请使用")
+					.append(chart.getChartType());
+		} else {
+			userInput.append("无明确目标，生成通用分析图表。\n");
 		}
-		userInput.append(userGoal).append("\n");
-		userInput.append("原始数据: ").append("\n");
 		// 压缩之后的数据
+		userInput.append("原始数据:\n");
 		String excelToCsv = ExcelUtils.excelToCsv(multipartFile);
+		if (StringUtils.isBlank(excelToCsv)) {
+			log.error("文件转换为 CSV 数据失败");
+			throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件数据转换失败");
+		}
 		userInput.append(excelToCsv).append("\n");
+		// 调用 AI 服务生成配置
 		String result = aiManager.doChat(userInput.toString());
+		if (StringUtils.isBlank(result)) {
+			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "AI 响应为空");
+		}
+		// 处理 AI 返回内容
 		result = result.replaceAll("```json", "").replaceAll("```", "").trim();
-		String[] split = result.split("【【【【【");
+		String[] split = result.split("'【【【【【'");
+		if (split.length > 3) {
+			log.error("AI 响应解析失败: {}", result);
+			throw new BusinessException(ErrorCode.PARAMS_ERROR, "AI 生成格式错误");
+		}
+		
 		String genChart = split[1];
 		String genResult = split[2];
-		if (split.length > 3) {
-			throw new BusinessException(ErrorCode.PARAMS_ERROR, "AI 生成错误");
-		}
 		// todo 填充默认数据
 		chart.setChartData(excelToCsv);
 		chart.setUserId(loginUser.getId());
 		chart.setGenChart(genChart);
 		chart.setGenResult(genResult);
-		// 数据入库
+		
+		// 保存生成的图表数据
 		boolean saveResult = chartService.save(chart);
 		ThrowUtils.throwIf(!saveResult, ErrorCode.SYSTEM_ERROR, "数据保存失败");
+		
+		// 返回生成的图表响应
 		BIResponse biResponse = new BIResponse();
 		biResponse.setGenChart(genChart);
 		biResponse.setGenResult(genResult);
 		return ResultUtils.success(biResponse);
 	}
+	
 }
