@@ -1,7 +1,7 @@
 package com.stephen.trajectory.mapper;
 
-import com.stephen.trajectory.model.entity.Chart;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.stephen.trajectory.model.entity.Chart;
 
 /**
 * @author stephen qiu

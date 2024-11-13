@@ -3,8 +3,6 @@ package com.stephen.trajectory.model.dto.chart;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  * 创建图表信息请求
@@ -33,11 +31,6 @@ public class ChartAddRequest implements Serializable {
 	 * 图表类型
 	 */
 	private String chartType;
-	
-	/**
-	 * 标签列表(JSON数组)
-	 */
-	private List<String> tags;
 	
 	
 	private static final long serialVersionUID = 1L;

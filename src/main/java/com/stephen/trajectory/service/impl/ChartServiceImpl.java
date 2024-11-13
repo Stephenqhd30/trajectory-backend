@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -96,7 +95,6 @@ public class ChartServiceImpl extends ServiceImpl
 		String name = chartQueryRequest.getName();
 		String chartType = chartQueryRequest.getChartType();
 		Long userId = chartQueryRequest.getUserId();
-		List<String> tags = chartQueryRequest.getTags();
 		String sortField = chartQueryRequest.getSortField();
 		String sortOrder = chartQueryRequest.getSortOrder();
 		
@@ -104,12 +102,6 @@ public class ChartServiceImpl extends ServiceImpl
 		// 模糊查询
 		queryWrapper.like(StringUtils.isNotBlank(goal), "goal", goal);
 		queryWrapper.like(StringUtils.isNotBlank(name), "name", name);
-		// JSON 数组查询
-		if (CollUtil.isNotEmpty(tags)) {
-			for (String tag : tags) {
-				queryWrapper.like("tags", "\"" + tag + "\"");
-			}
-		}
 		// 精确查询
 		queryWrapper.eq(StringUtils.isNotBlank(chartType), "chartType", chartType);
 		queryWrapper.eq(ObjectUtils.isNotEmpty(id), "id", id);

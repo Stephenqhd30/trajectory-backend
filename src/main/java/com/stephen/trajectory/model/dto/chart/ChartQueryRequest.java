@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  * 查询图表信息请求
@@ -51,11 +49,6 @@ public class ChartQueryRequest extends PageRequest implements Serializable {
 	 * 创建用户id
 	 */
 	private Long userId;
-	
-	/**
-	 * 标签列表(JSON数组)
-	 */
-	private List<String> tags;
 	
 	
 	private static final long serialVersionUID = 1L;

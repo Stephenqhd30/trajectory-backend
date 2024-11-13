@@ -57,11 +57,6 @@ public class Chart implements Serializable {
 	private Long userId;
 	
 	/**
-	 * 标签列表(JSON数组)
-	 */
-	private String tags;
-	
-	/**
 	 * 创建时间
 	 */
 	private Date createTime;

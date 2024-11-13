@@ -1,17 +1,11 @@
 package com.stephen.trajectory.model.vo;
 
-import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.stephen.trajectory.model.entity.Chart;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
-import cn.hutool.core.collection.CollUtil;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 图表信息视图
@@ -62,11 +56,6 @@ public class ChartVO implements Serializable {
 	private Long userId;
 	
 	/**
-	 * 标签列表(JSON数组)
-	 */
-	private List<String> tags;
-	
-	/**
 	 * 创建时间
 	 */
 	private Date createTime;
@@ -93,11 +82,6 @@ public class ChartVO implements Serializable {
 		}
 		Chart chart = new Chart();
 		BeanUtils.copyProperties(chartVO, chart);
-		List<String> tagList = chartVO.getTags();
-		chart.setTags(JSONUtil.toJsonStr(tagList));
-		if (CollUtil.isNotEmpty(tagList)) {
-			chart.setTags(JSONUtil.toJsonStr(tagList));
-		}
 		return chart;
 	}
 	
@@ -113,9 +97,6 @@ public class ChartVO implements Serializable {
 		}
 		ChartVO chartVO = new ChartVO();
 		BeanUtils.copyProperties(chart, chartVO);
-		if (StringUtils.isNotBlank(chart.getTags())) {
-			chartVO.setTags(JSONUtil.toList(chart.getTags(), String.class));
-		}
 		return chartVO;
 	}
 }
