@@ -1,6 +1,8 @@
 package com.stephen.trajectory.model.dto.chart;
 
+import com.stephen.trajectory.model.dto.file.UploadFileRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -9,8 +11,9 @@ import java.io.Serializable;
  *
  * @author stephen qiu
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class GenChartByAIRequest implements Serializable {
+public class GenChartByAiRequest extends UploadFileRequest implements Serializable {
 	
 	private static final long serialVersionUID = -1193592573887027535L;
 	

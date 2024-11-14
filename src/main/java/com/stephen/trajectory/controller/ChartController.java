@@ -11,10 +11,12 @@ import com.stephen.trajectory.manager.ai.AIManager;
 import com.stephen.trajectory.model.dto.chart.*;
 import com.stephen.trajectory.model.entity.Chart;
 import com.stephen.trajectory.model.entity.User;
+import com.stephen.trajectory.model.enums.file.FileUploadBizEnum;
 import com.stephen.trajectory.model.vo.ChartVO;
 import com.stephen.trajectory.service.ChartService;
 import com.stephen.trajectory.service.UserService;
 import com.stephen.trajectory.utils.document.excel.ExcelUtils;
+import com.stephen.trajectory.utils.document.file.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -266,19 +268,24 @@ public class ChartController {
 	 * 通过生成图表
 	 *
 	 * @param multipartFile       上传的Excel文件
-	 * @param genChartByAIRequest 生成图表请求对象
+	 * @param genChartByAiRequest 生成图表请求对象
 	 * @param request             HTTP请求对象
 	 * @return {@link BaseResponse <{@link BIResponse}>}
 	 */
 	@PostMapping("/gen")
-	public BaseResponse<BIResponse> generateChartByAI(@RequestPart("file") MultipartFile multipartFile,
-	                                                  GenChartByAIRequest genChartByAIRequest,
-	                                                  HttpServletRequest request) {
+	public BaseResponse<BIResponse> genChartByAi(@RequestPart("file") MultipartFile multipartFile,
+	                                             GenChartByAiRequest genChartByAiRequest, HttpServletRequest request) {
 		
 		// 验证用户和请求参数
 		Chart chart = new Chart();
-		BeanUtils.copyProperties(genChartByAIRequest, chart);
+		BeanUtils.copyProperties(genChartByAiRequest, chart);
+		String biz = genChartByAiRequest.getBiz();
+		// 验证文件
+		FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
+		FileUtils.validFile(multipartFile, fileUploadBizEnum);
+		// 数据校验
 		chartService.validChart(chart, true);
+		
 		// 需要用户登录才能调用接口
 		User loginUser = userService.getLoginUser(request);
 		// 构造用户输入

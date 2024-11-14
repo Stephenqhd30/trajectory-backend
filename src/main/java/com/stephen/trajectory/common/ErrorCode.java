@@ -13,7 +13,7 @@ public enum ErrorCode {
 	SUCCESS(0, "ok"),
 	PARAMS_ERROR(40000, "请求参数错误"),
 	EXCEL_ERROR(40001, "处理excel文件错误, 请检查表格信息是否有误"),
-	PARAMS_SIZE_ERROR(40002, "上传图片大小最大为5MB"),
+	PARAMS_SIZE_ERROR(40002, "文件上传大小错误"),
 	WORD_ERROR(40002, "处理word文件错误"),
 	NOT_LOGIN_ERROR(40100, "未登录"),
 	NO_AUTH_ERROR(40101, "无权限"),

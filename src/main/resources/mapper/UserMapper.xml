@@ -2,14 +2,12 @@
 <!DOCTYPE mapper
 		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.stephen.popcorn.mapper.UserMapper">
+<mapper namespace="com.stephen.trajectory.mapper.UserMapper">
 
 	<resultMap id="BaseResultMap" type="com.stephen.trajectory.model.entity.User">
 		<id property="id" column="id" jdbcType="BIGINT"/>
 		<result property="userAccount" column="userAccount" jdbcType="VARCHAR"/>
 		<result property="userPassword" column="userPassword" jdbcType="VARCHAR"/>
-		<result property="unionId" column="unionId" jdbcType="VARCHAR"/>
-		<result property="mpOpenId" column="mpOpenId" jdbcType="VARCHAR"/>
 		<result property="userName" column="userName" jdbcType="VARCHAR"/>
 		<result property="userGender" column="userGender" jdbcType="TINYINT"/>
 		<result property="userPhone" column="userPhone" jdbcType="VARCHAR"/>
@@ -26,8 +24,7 @@
 
 	<sql id="Base_Column_List">
 		id
-		,userAccount,userPassword,
-        unionId,mpOpenId,userName,userGender,
+		,userAccount,userPassword,userName,userGender,
         userPhone,userAvatar,userProfile, tags,
         userRole,userEmail,createTime, editTime,
         updateTime,isDelete

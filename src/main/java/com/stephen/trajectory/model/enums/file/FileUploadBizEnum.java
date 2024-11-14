@@ -19,7 +19,8 @@ public enum FileUploadBizEnum {
 	
 	USER_AVATAR("用户头像", "user_avatar"),
 	POST_COVER("帖子封面", "post_cover"),
-	POST_IMAGE_COVER("帖子上传图片", "post_image_cover");
+	POST_IMAGE_COVER("帖子上传图片", "post_image_cover"),
+	GENERATE_EXCEL("AI分析上传的Excel文件", "generate_excel");
 	
 	private final String text;
 	
