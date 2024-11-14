@@ -2,7 +2,7 @@ package com.stephen.trajectory.utils.redisson.lock;
 
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.config.bean.SpringContextHolder;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.utils.redisson.KeyPrefixConstants;
 import com.stephen.trajectory.utils.redisson.lock.function.SuccessFunction;
 import com.stephen.trajectory.utils.redisson.lock.function.VoidFunction;

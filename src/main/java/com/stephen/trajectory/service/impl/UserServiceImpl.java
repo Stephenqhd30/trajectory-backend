@@ -15,7 +15,7 @@ import com.stephen.trajectory.constants.CommonConstant;
 import com.stephen.trajectory.constants.RedisConstant;
 import com.stephen.trajectory.constants.SaltConstant;
 import com.stephen.trajectory.constants.UserConstant;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.mapper.UserMapper;
 import com.stephen.trajectory.model.dto.user.UserMatchRequest;
 import com.stephen.trajectory.model.dto.user.UserQueryRequest;

@@ -1,6 +1,6 @@
 package com.stephen.trajectory.common;
 
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 
 /**
  * 抛异常工具类

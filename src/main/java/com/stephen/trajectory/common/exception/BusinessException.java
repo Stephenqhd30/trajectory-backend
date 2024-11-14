@@ -1,4 +1,4 @@
-package com.stephen.trajectory.exception;
+package com.stephen.trajectory.common.exception;
 
 import com.stephen.trajectory.common.ErrorCode;
 import lombok.Getter;

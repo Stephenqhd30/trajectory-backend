@@ -3,159 +3,64 @@
 > 作者：[StephenQiu](https://stephenqhd30.github.io/)
 > 仅分享于 [StephenQiu个人博客](https://stephenqhd30.github.io/)
 
-基于 Java SpringBoot 的项目初始模板，整合了常用框架和主流业务的示例代码。
-
-[toc]
-
-## 模板特点
-
 ### 主流框架 & 特性
 
-- Spring Boot 2.7.x
-- Spring MVC
-- MyBatis + MyBatis Plus 数据访问（开启分页）
-- Spring Boot 调试工具和项目处理器
-- Spring AOP 切面编程
-- Spring Scheduler 定时任务
-- Spring 事务注解
+- **Spring Boot 2.7.x**：简化 Spring 应用开发，提供自动化配置，内置应用服务器，帮助快速构建生产级别的 Spring 应用。
+- **Spring MVC**：用于构建基于 Web 的应用，提供了强大的请求映射和视图处理功能，方便开发 RESTful 接口。
+- **MyBatis + MyBatis Plus**：MyBatis 提供了 SQL 映射框架，支持自定义 SQL，MyBatis Plus 增强了 CRUD 操作并提供分页功能，提高开发效率。
+- **Spring Boot 调试工具和项目处理器**：便于调试应用，简化开发环境配置，提高开发效率。
+- **Spring AOP**：面向切面编程，用于日志记录、性能监控、权限校验等，增强代码的复用性和可维护性。
+- **Spring Scheduler**：提供任务调度功能，用于执行定时任务，如同步数据、清理缓存等。
+- **Spring 事务注解**：确保数据一致性，通过注解的方式管理事务，使代码简洁且易于维护。
+
+---
 
 ### 数据存储
 
-- MySQL 数据库
-- Redis 内存数据库
-- Elasticsearch 搜索引擎
-- 腾讯云 COS 对象存储
+- **MySQL**：关系型数据库，存储核心业务数据，支持复杂查询、事务管理等。
+- **Redis**：内存数据库，用于缓存和加速数据访问，减少数据库压力，提高系统性能。
+- **Elasticsearch**：分布式搜索引擎，用于实现全文搜索和数据分析功能，如快速搜索帖子。
+- **腾讯云 COS**：对象存储服务，支持图片和文件的存储，便于实现文件上传和分发。
+
+---
 
 ### 工具类
 
-- Easy Excel 表格处理
-- Hutool 工具库
-- Apache Commons Lang3 工具类
-- Lombok 注解
-- RabbitMQ 消息队列
-- Redisson 分布式
-- Caffeine 本地缓存
+- **Easy Excel**：简化 Excel 文件的读取和写入操作，适用于导入导出数据的场景。
+- **Hutool**：提供一系列实用工具类，简化开发中的通用操作，如字符串处理、日期时间处理等。
+- **Apache Commons Lang3**：常用的 Java 工具类库，包含各种辅助类和方法，增强 Java 标准库功能。
+- **Lombok**：通过注解自动生成 Getter、Setter、构造器等，减少样板代码，提高开发效率。
+- **RabbitMQ**：消息队列，用于异步任务处理和系统解耦，提高系统的扩展性和性能。
+- **Redisson**：分布式解决方案，增强 Redis 的使用，如分布式锁、延时队列、信号量等，确保数据一致性。
+- **Caffeine**：高性能的本地缓存，提高数据访问速度，减少数据库的访问频率。
+
+---
 
 ### 业务特性
 
-- Spring Session Redis 分布式登录
-- 全局请求响应拦截器（记录日志）
-- 全局异常处理器
-- 自定义错误码
-- 封装通用响应类
-- Swagger + Knife4j 接口文档
-- 自定义权限注解 + 全局校验
-- 全局跨域处理
-- 长整数丢失精度解决
-- 多环境配置
+- **Spring Session Redis**：分布式会话管理，实现分布式环境下的用户会话共享，支持分布式登录。
+- **全局请求响应拦截器**：记录请求和响应日志，便于问题追踪和监控系统性能。
+- **全局异常处理器**：统一管理异常，提供友好的错误提示，减少代码中的重复异常处理逻辑。
+- **自定义错误码**：定义统一的错误码管理，提高 API 的可读性，便于前后端沟通。
+- **封装通用响应类**：统一 API 返回格式，标准化响应数据结构。
+- **Swagger + Knife4j**：生成接口文档，支持在线调试，便于接口管理和测试。
+- **自定义权限注解 + 全局校验**：通过注解控制权限访问，保证用户的安全性和数据的完整性。
+- **全局跨域处理**：支持跨域访问，允许不同域名的客户端访问接口，适用于前后端分离的项目。
+- **长整数丢失精度解决**：解决前端 JSON 解析长整型数字时丢失精度的问题，确保数据的准确性。
+- **多环境配置**：支持开发、测试、生产等多种环境配置，简化不同环境的切换，提高应用的可移植性。
 
-## 业务功能
+---
 
-- 提供示例 SQL（用户、帖子、帖子点赞、帖子收藏表）
-- 用户登录、注册、注销、更新、检索、权限管理
-- 帖子创建、删除、编辑、更新、数据库检索、ES 灵活检索
-- 帖子点赞、取消点赞
-- 帖子收藏、取消收藏、检索已收藏帖子
-- 帖子全量同步 ES、增量同步 ES 定时任务
-- 支持微信开放平台登录
-- 支持微信公众号订阅、收发消息、设置菜单
-- 支持分业务的文件上传
+### 业务功能
+
+- **用户管理**：实现用户的注册、登录、更新、权限管理等功能，保证用户数据的安全和完整性。
+- **帖子管理**：实现帖子的创建、编辑、检索、点赞、收藏等操作，支持数据库和 Elasticsearch 检索功能。
+- **帖子全量与增量同步**：通过定时任务实现 Elasticsearch 的数据同步，确保数据搜索的实时性和准确性。
+- **第三方平台集成**：支持微信开放平台和微信公众号功能，包括登录、消息订阅、菜单设置等，拓展系统的功能。
+- **文件上传**：支持多业务文件的上传和存储管理，提高文件处理的灵活性。
+
+---
 
 ### 单元测试
 
-- JUnit5 单元测试
-- 示例单元测试类
-
-### 架构设计
-
-- 合理分层
-
-## 快速上手
-
-> 所有需要修改的地方都标记了 `todo`，便于大家找到修改的位置~
-
-### MySQL 数据库
-
-1）修改 `application.yml` 的数据库配置为你自己的：
-
-```yml
-spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/trajectory
-    username: root
-    password: 123456
-```
-
-2）执行 `sql/create_table.sql` 中的数据库语句，自动创建库表
-
-3）启动项目，访问 `http://localhost:8101/api/doc.html` 即可打开接口文档，不需要写前端就能在线调试接口了~
-
-![](doc/swagger.png)
-
-### Redis 分布式登录
-
-1）修改 `application.yml` 的 Redis 配置为你自己的：
-
-```yml
-spring:
-  redis:
-    database: 1
-    host: localhost
-    port: 6379
-    timeout: 180000
-```
-
-2）修改 `application.yml` 中的 session 存储方式：
-
-```yml
-spring:
-  session:
-    store-type: redis
-```
-
-3）移除 `MainApplication` 类开头 `@SpringBootApplication` 注解内的 exclude 参数：
-
-修改前：
-
-```java
-@SpringBootApplication(exclude = {RedisAutoConfiguration.class})
-```
-
-修改后：
-
-```java
-@SpringBootApplication
-```
-
-### Elasticsearch 搜索引擎
-
-1）修改 `application.yml` 的 Elasticsearch 配置为你自己的：
-
-```yml
-spring:
-  elasticsearch:
-    uris: http://localhost:9200
-    username: root
-    password: 123456
-```
-
-2）复制 `sql/post_es_mapping.json` 文件中的内容，通过调用 Elasticsearch 的接口或者 Kibana Dev Tools 来创建索引（相当于数据库建表）
-
-```
-PUT post_v1
-{
- 参数见 sql/post_es_mapping.json 文件
-}
-```
-
-这步不会操作的话需要补充下 Elasticsearch 的知识，或者自行百度一下~
-
-3）开启同步任务，将数据库的帖子同步到 Elasticsearch
-
-找到 job 目录下的 `FullSyncPostToEs` 和 `IncSyncPostToEs` 文件，取消掉 `@Component` 注解的注释，再次执行程序即可触发同步：
-
-```java
-// todo 取消注释开启任务
-//@Component
-```
+- **JUnit5**：编写和执行单元测试，提高代码质量和可靠性，保证主要业务逻辑的正确性。

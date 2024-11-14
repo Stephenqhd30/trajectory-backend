@@ -5,7 +5,7 @@ import com.stephen.trajectory.common.BaseResponse;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ResultUtils;
 import com.stephen.trajectory.common.ThrowUtils;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.model.dto.post.PostQueryRequest;
 import com.stephen.trajectory.model.dto.postfavour.PostFavourAddRequest;
 import com.stephen.trajectory.model.dto.postfavour.PostFavourQueryRequest;

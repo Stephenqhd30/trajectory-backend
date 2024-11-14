@@ -2,11 +2,11 @@ package com.stephen.trajectory.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.stephen.trajectory.annotation.AuthCheck;
+import com.stephen.trajectory.common.annotation.AuthCheck;
 import com.stephen.trajectory.common.*;
 import com.stephen.trajectory.constants.RedisConstant;
 import com.stephen.trajectory.constants.UserConstant;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.model.dto.tag.*;
 import com.stephen.trajectory.model.entity.Tag;
 import com.stephen.trajectory.model.entity.User;

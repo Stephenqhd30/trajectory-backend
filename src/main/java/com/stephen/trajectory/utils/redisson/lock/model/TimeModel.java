@@ -1,7 +1,7 @@
 package com.stephen.trajectory.utils.redisson.lock.model;
 
 import com.stephen.trajectory.common.ErrorCode;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.ObjectUtils;

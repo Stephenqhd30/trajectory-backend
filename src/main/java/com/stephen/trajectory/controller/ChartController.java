@@ -1,10 +1,12 @@
 package com.stephen.trajectory.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.stephen.trajectory.annotation.AuthCheck;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stephen.trajectory.common.annotation.AuthCheck;
 import com.stephen.trajectory.common.*;
 import com.stephen.trajectory.constants.UserConstant;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.manager.ai.AIManager;
 import com.stephen.trajectory.model.dto.chart.*;
 import com.stephen.trajectory.model.entity.Chart;
@@ -313,8 +315,19 @@ public class ChartController {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR, "AI 生成格式错误");
 		}
 		
-		String genChart = split[1];
-		String genResult = split[2];
+		String genChart = split[1].trim();
+		String genResult = split[2].trim();
+		
+		// 校验生成的 JSON 格式
+		try {
+			// 尝试解析 JSON 配置部分
+			ObjectMapper objectMapper = new ObjectMapper();
+			// 验证 JSON 格式
+			objectMapper.readTree(genChart);
+		} catch (JsonProcessingException e) {
+			log.error("生成的图表配置 JSON 格式无效: {}", genChart, e);
+			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "AI 生成的图表配置格式无效");
+		}
 		// todo 填充默认数据
 		chart.setChartData(excelToCsv);
 		chart.setUserId(loginUser.getId());

@@ -1,8 +1,5 @@
 package com.stephen.trajectory.manager.ai;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stephen.trajectory.common.ErrorCode;
-import com.stephen.trajectory.exception.BusinessException;
 import io.github.briqt.spark4j.SparkClient;
 import io.github.briqt.spark4j.constant.SparkApiVersion;
 import io.github.briqt.spark4j.exception.SparkException;
@@ -34,14 +31,34 @@ public class AIManager {
 			"{数据分析的需求或者目标}\n" +
 			"原始数据：\n" +
 			"{csv格式的原始数据，用,作为分隔符}\n" +
-			"请根据这两部分内容，严格按照以下指定格式生成内容（此外不要输出任何多余的开头、结尾、标题、 注释）同时不要使用这个符号 '】'\n" +
+			"请根据这两部分内容，严格按照以下指定格式生成内容（此外不要输出任何多余的开头、结尾、 注释）同时不要使用这个符号 '】'\n" +
 			"'【【【【【'\n" +
 			"{前端 Echarts V5 的 option 配置对象 JSON 代码, 不要生成任何多余的内容，比如注释和代码块标记}\n" +
 			"'【【【【【'\n" +
 			"{明确的数据分析结论、越详细越好，不要生成多余的注释} \n" +
 			"下面是一个具体的例子的模板：\n" +
 			"'【【【【【'\n" +
-			"JSON格式代码\n" +
+			"{\n" +
+			"    \"title\": {\n" +
+			"        \"text\": \"人数统计\"\n" +
+			"    },\n" +
+			"    \"tooltip\": {},\n" +
+			"    \"legend\": {\n" +
+			"        \"data\": [\"人数\"]\n" +
+			"    },\n" +
+			"    \"xAxis\": {\n" +
+			"        \"data\": [\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\"],\n" +
+			"        \"axisLabel\": {\n" +
+			"            \"interval\": 0\n" +
+			"        }\n" +
+			"    },\n" +
+			"    \"yAxis\": {},\n" +
+			"    \"series\": [{\n" +
+			"        \"name\": \"人数\",\n" +
+			"        \"type\": \"bar\",\n" +
+			"        \"data\": [10, 50, 30, 50, 60, 10, 70]\n" +
+			"    }]\n" +
+			"}\n" +
 			"'【【【【【'\n" +
 			"结论：\n";
 	
@@ -61,9 +78,9 @@ public class AIManager {
 				// 消息列表
 				.messages(messages)
 				// 模型回答的tokens的最大长度,非必传，默认为2048。
-				.maxTokens(2048)
+				.maxTokens(4096)
 				// 核采样阈值。用于决定结果随机性,取值越高随机性越强即相同的问题得到的不同答案的可能性越高 非必传,取值为[0,1],默认为0.5
-				.temperature(0.2)
+				.temperature(0.9)
 				// 指定请求版本，默认使用最新3.5版本
 				.apiVersion(SparkApiVersion.V3_5)
 				.build();

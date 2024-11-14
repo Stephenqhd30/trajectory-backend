@@ -11,7 +11,7 @@ import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.config.oss.cos.condition.CosCondition;
 import com.stephen.trajectory.config.oss.cos.properties.CosProperties;
 import com.stephen.trajectory.constants.FileConstant;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.model.entity.LogFiles;
 import com.stephen.trajectory.model.enums.oss.OssTypeEnum;
 import com.stephen.trajectory.service.LogFilesService;

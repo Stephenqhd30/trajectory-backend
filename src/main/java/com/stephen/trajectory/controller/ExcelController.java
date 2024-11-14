@@ -1,7 +1,7 @@
 package com.stephen.trajectory.controller;
 
 import com.alibaba.excel.EasyExcel;
-import com.stephen.trajectory.annotation.AuthCheck;
+import com.stephen.trajectory.common.annotation.AuthCheck;
 import com.stephen.trajectory.common.BaseResponse;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ResultUtils;

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.constants.CommonConstant;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.mapper.PostFavourMapper;
 import com.stephen.trajectory.mapper.PostMapper;
 import com.stephen.trajectory.mapper.PostThumbMapper;

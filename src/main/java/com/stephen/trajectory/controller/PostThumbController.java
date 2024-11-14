@@ -3,7 +3,7 @@ package com.stephen.trajectory.controller;
 import com.stephen.trajectory.common.BaseResponse;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ResultUtils;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.model.dto.postthumb.PostThumbAddRequest;
 import com.stephen.trajectory.model.entity.User;
 import com.stephen.trajectory.service.PostThumbService;

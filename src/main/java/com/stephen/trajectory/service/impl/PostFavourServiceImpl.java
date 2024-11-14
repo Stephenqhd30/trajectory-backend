@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.stephen.trajectory.common.ErrorCode;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.mapper.PostFavourMapper;
 import com.stephen.trajectory.model.entity.Post;
 import com.stephen.trajectory.model.entity.PostFavour;

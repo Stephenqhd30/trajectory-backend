@@ -2,7 +2,7 @@ package com.stephen.trajectory.utils.encrypt;
 
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.stephen.trajectory.common.ErrorCode;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.Cipher;

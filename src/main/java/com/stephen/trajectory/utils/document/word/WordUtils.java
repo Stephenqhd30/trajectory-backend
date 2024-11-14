@@ -4,7 +4,7 @@ import com.documents4j.api.DocumentType;
 import com.documents4j.api.IConverter;
 import com.documents4j.job.LocalConverter;
 import com.stephen.trajectory.common.ErrorCode;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;

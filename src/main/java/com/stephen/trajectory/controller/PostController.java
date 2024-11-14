@@ -2,10 +2,10 @@ package com.stephen.trajectory.controller;
 
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.stephen.trajectory.annotation.AuthCheck;
+import com.stephen.trajectory.common.annotation.AuthCheck;
 import com.stephen.trajectory.common.*;
 import com.stephen.trajectory.constants.UserConstant;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.model.dto.post.PostAddRequest;
 import com.stephen.trajectory.model.dto.post.PostEditRequest;
 import com.stephen.trajectory.model.dto.post.PostQueryRequest;

@@ -3,7 +3,7 @@ package com.stephen.trajectory.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.stephen.trajectory.common.ErrorCode;
-import com.stephen.trajectory.exception.BusinessException;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.mapper.PostThumbMapper;
 import com.stephen.trajectory.model.entity.Post;
 import com.stephen.trajectory.model.entity.PostThumb;
