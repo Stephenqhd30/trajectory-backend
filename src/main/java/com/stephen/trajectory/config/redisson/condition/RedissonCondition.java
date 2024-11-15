@@ -13,7 +13,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class RedissonCondition implements Condition {
 	@Override
 	public boolean matches(ConditionContext context, @NotNull AnnotatedTypeMetadata metadata) {
-		String enabled = context.getEnvironment().getProperty("redis.enabled");
+		String enabled = context.getEnvironment().getProperty("redisson.enabled");
 		return Boolean.parseBoolean(enabled);
 	}
 }

@@ -114,6 +114,12 @@ knife4j:
         api-rule-resources:
           - com.stephen.trajectory.controller
 
+# Redisson 配置
+redisson:
+  enabled: true
+  database: ${dev.redisson.database}
+  host: ${dev.redisson.host}
+  port: ${dev.redisson.port}
 # 对象存储配置
 oss:
   # MinIO OSS配置
@@ -138,3 +144,5 @@ xunfei:
     appid: ${dev.xunfei.client.appid}
     api-key: ${dev.xunfei.client.api-key}
     api-secret: ${dev.xunfei.client.api-secret}
+
+

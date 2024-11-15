@@ -8,6 +8,7 @@ import com.stephen.trajectory.common.*;
 import com.stephen.trajectory.constants.UserConstant;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.manager.ai.AIManager;
+import com.stephen.trajectory.manager.redis.RedisLimiterManager;
 import com.stephen.trajectory.model.dto.chart.*;
 import com.stephen.trajectory.model.entity.Chart;
 import com.stephen.trajectory.model.entity.User;
@@ -44,6 +45,9 @@ public class ChartController {
 	
 	@Resource
 	private AIManager aiManager;
+	
+	@Resource
+	private RedisLimiterManager redisLimiterManager;
 
 // region 增删改查
 	
@@ -288,6 +292,8 @@ public class ChartController {
 		
 		// 需要用户登录才能调用接口
 		User loginUser = userService.getLoginUser(request);
+		// 限流
+		redisLimiterManager.doRateLimit("chart:gen:" + loginUser.getId());
 		// 构造用户输入
 		StringBuilder userInput = new StringBuilder();
 		userInput.append("分析需求: ").append("\n");
