@@ -1,8 +1,8 @@
 package com.stephen.trajectory.utils.net;
 
 import com.stephen.trajectory.common.ErrorCode;
-import com.stephen.trajectory.config.bean.SpringContextHolder;
 import com.stephen.trajectory.common.exception.BusinessException;
+import com.stephen.trajectory.config.bean.SpringContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.lionsoul.ip2region.xdb.Searcher;
 

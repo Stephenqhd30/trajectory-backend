@@ -7,8 +7,8 @@ import com.stephen.trajectory.common.ResultUtils;
 import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.model.dto.post.PostQueryRequest;
-import com.stephen.trajectory.model.dto.postFavour.PostFavourQueryRequest;
 import com.stephen.trajectory.model.dto.postThumb.PostThumbAddRequest;
+import com.stephen.trajectory.model.dto.postThumb.PostThumbQueryRequest;
 import com.stephen.trajectory.model.entity.Post;
 import com.stephen.trajectory.model.entity.User;
 import com.stephen.trajectory.model.vo.PostVO;
@@ -87,25 +87,25 @@ public class PostThumbController {
 	}
 	
 	/**
-	 * 获取用户收藏的帖子列表
+	 * 获取用户点赞的帖子列表
 	 *
-	 * @param postFavourQueryRequest postFavourQueryRequest
-	 * @param request                request
+	 * @param postThumbQueryRequest postThumbQueryRequest
+	 * @param request               request
 	 * @return BaseResponse<Page < PostVO>>
 	 */
 	@PostMapping("/list/page")
-	public BaseResponse<Page<PostVO>> listFavourPostByPage(@RequestBody PostFavourQueryRequest postFavourQueryRequest,
-	                                                       HttpServletRequest request) {
-		if (postFavourQueryRequest == null) {
+	public BaseResponse<Page<PostVO>> listThumbPostByPage(@RequestBody PostThumbQueryRequest postThumbQueryRequest,
+	                                                      HttpServletRequest request) {
+		if (postThumbQueryRequest == null) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
 		}
-		long current = postFavourQueryRequest.getCurrent();
-		long size = postFavourQueryRequest.getPageSize();
-		Long userId = postFavourQueryRequest.getUserId();
+		long current = postThumbQueryRequest.getCurrent();
+		long size = postThumbQueryRequest.getPageSize();
+		Long userId = postThumbQueryRequest.getUserId();
 		// 限制爬虫
 		ThrowUtils.throwIf(size > 20 || userId == null, ErrorCode.PARAMS_ERROR);
 		Page<Post> postPage = postThumbService.listThumbPostByPage(new Page<>(current, size),
-				postService.getQueryWrapper(postFavourQueryRequest.getPostQueryRequest()), userId);
+				postService.getQueryWrapper(postThumbQueryRequest.getPostQueryRequest()), userId);
 		return ResultUtils.success(postService.getPostVOPage(postPage, request));
 	}
 	

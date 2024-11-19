@@ -1,9 +1,9 @@
 package com.stephen.trajectory.config.oss.minio;
 
 import com.stephen.trajectory.common.ErrorCode;
+import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.config.oss.minio.condition.MinioCondition;
 import com.stephen.trajectory.config.oss.minio.properties.MinioProperties;
-import com.stephen.trajectory.common.exception.BusinessException;
 import io.minio.MinioClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

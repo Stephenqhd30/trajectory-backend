@@ -1,6 +1,5 @@
 package com.stephen.trajectory.controller;
 
-import cn.hutool.core.io.FileUtil;
 import com.stephen.trajectory.common.BaseResponse;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ResultUtils;
@@ -22,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * 文件接口

@@ -1,7 +1,7 @@
 package com.stephen.trajectory.aop;
 
-import com.stephen.trajectory.common.annotation.AuthCheck;
 import com.stephen.trajectory.common.ErrorCode;
+import com.stephen.trajectory.common.annotation.AuthCheck;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.model.entity.User;
 import com.stephen.trajectory.model.enums.user.UserRoleEnum;
