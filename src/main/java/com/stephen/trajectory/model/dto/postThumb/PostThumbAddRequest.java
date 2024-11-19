@@ -1,4 +1,4 @@
-package com.stephen.trajectory.model.dto.postthumb;
+package com.stephen.trajectory.model.dto.postThumb;
 
 import lombok.Data;
 

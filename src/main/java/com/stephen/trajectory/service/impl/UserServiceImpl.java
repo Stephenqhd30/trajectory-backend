@@ -277,7 +277,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		LoginUserVO loginUserVO = new LoginUserVO();
 		BeanUtils.copyProperties(user, loginUserVO);
 		String tags = user.getTags();
-		loginUserVO.setTagList(JSONUtil.toList(tags, String.class));
+		loginUserVO.setTags(JSONUtil.toList(tags, String.class));
 		return loginUserVO;
 	}
 	

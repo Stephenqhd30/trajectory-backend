@@ -19,4 +19,11 @@
 		,postId,
         userId,createTime,updateTime
 	</sql>
+	<!-- 分页获取已点赞帖子列表 -->
+	<select id="listThumbPostByPage" resultType="com.stephen.trajectory.model.entity.Post">
+		select p.*
+		from post p
+			     join (select postId from post_thumb where userId = #{thumbUserId}) pt
+			          on p.id = pt.postId ${ew.customSqlSegment}
+	</select>
 </mapper>

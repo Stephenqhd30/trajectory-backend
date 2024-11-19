@@ -1,4 +1,4 @@
-package com.stephen.trajectory.model.dto.postfavour;
+package com.stephen.trajectory.model.dto.postFavour;
 
 import lombok.Data;
 

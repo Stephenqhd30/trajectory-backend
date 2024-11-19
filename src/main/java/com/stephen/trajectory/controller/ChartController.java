@@ -303,7 +303,8 @@ public class ChartController {
 		if (StringUtils.isNotBlank(userGoal)) {
 			userInput.append(userGoal)
 					.append(",请使用")
-					.append(chart.getChartType());
+					.append(chart.getChartType())
+					.append("进行分析。\n");
 		} else {
 			userInput.append("无明确目标，生成通用分析图表。\n");
 		}
@@ -320,6 +321,7 @@ public class ChartController {
 		if (StringUtils.isBlank(result)) {
 			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "AI 响应为空");
 		}
+		log.info("AI 响应: {}", result);
 		// 处理 AI 返回内容
 		result = result.replaceAll("```json", "").replaceAll("```", "").trim();
 		String[] split = result.split("'【【【【【'");

@@ -1,6 +1,9 @@
 package com.stephen.trajectory.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.exception.BusinessException;
@@ -96,6 +99,22 @@ public class PostThumbServiceImpl extends ServiceImpl<PostThumbMapper, PostThumb
 				throw new BusinessException(ErrorCode.SYSTEM_ERROR);
 			}
 		}
+	}
+	
+	/**
+	 * 分页获取用户点赞的帖子列表
+	 *
+	 * @param page         page
+	 * @param queryWrapper queryWrapper
+	 * @param thumbUserId thumbUserId
+	 * @return {@link Page <Post>}
+	 */
+	@Override
+	public Page<Post> listThumbPostByPage(IPage<Post> page, Wrapper<Post> queryWrapper, long thumbUserId) {
+		if (thumbUserId <= 0) {
+			return new Page<>();
+		}
+		return baseMapper.listThumbPostByPage(page, queryWrapper, thumbUserId);
 	}
 	
 }

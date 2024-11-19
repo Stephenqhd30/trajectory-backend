@@ -1,4 +1,4 @@
-package com.stephen.trajectory.model.dto.postfavour;
+package com.stephen.trajectory.model.dto.postFavour;
 
 import com.stephen.trajectory.common.PageRequest;
 import com.stephen.trajectory.model.dto.post.PostQueryRequest;

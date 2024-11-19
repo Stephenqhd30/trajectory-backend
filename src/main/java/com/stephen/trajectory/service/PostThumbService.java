@@ -1,6 +1,10 @@
 package com.stephen.trajectory.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.stephen.trajectory.model.entity.Post;
 import com.stephen.trajectory.model.entity.PostThumb;
 import com.stephen.trajectory.model.entity.User;
 
@@ -28,4 +32,14 @@ public interface PostThumbService extends IService<PostThumb> {
 	 * @return
 	 */
 	int doPostThumbInner(long userId, long postId);
+	
+	/**
+	 * 分页获取用户点赞的帖子列表
+	 *
+	 * @param page         page
+	 * @param queryWrapper queryWrapper
+	 * @param thumbUserId thumbUserId
+	 * @return {@link Page <Post>}
+	 */
+	Page<Post> listThumbPostByPage(IPage<Post> page, Wrapper<Post> queryWrapper, long thumbUserId);
 }

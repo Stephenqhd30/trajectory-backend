@@ -73,6 +73,6 @@ public class LoginUserVO implements Serializable {
 	/**
 	 * 用户标签(JSON字符数组)
 	 */
-	private List<String> tagList;
+	private List<String> tags;
 	
 }
