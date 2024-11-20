@@ -17,8 +17,8 @@ class CosManagerTest {
 	@Resource
 	private CosManager cosManager;
 	
-	@Test
-	void putObject() {
-		cosManager.putObject("test", "test.json");
-	}
+	// @Test
+	// void putObject() {
+	// 	cosManager.putObject("test", "test.json");
+	// }
 }

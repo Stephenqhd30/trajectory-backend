@@ -3,7 +3,7 @@
 #
 spring:
   application:
-    name: learning-backend
+    name: trajectory-backend
   config:
     activate:
       on-profile: prod
@@ -42,7 +42,7 @@ server:
     session:
       cookie:
         max-age: 2592000
-        domain: 1.13.163.104
+        domain: 121.36.17.18
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
@@ -56,7 +56,40 @@ mybatis-plus:
 # 对象存储
 cos:
   client:
+    enable: true
     accessKey: ${prod.cos.client.accessKey}
     secretKey: ${prod.cos.client.secretKey}
     region: ${prod.cos.client.region}
     bucket: ${prod.cos.client.bucket}
+
+# Redisson 配置
+redisson:
+  enabled: true
+  database: ${prod.redisson.database}
+  host: ${prod.redisson.host}
+  port: ${prod.redisson.port}
+  password: ${prod.redisson.password}
+# 对象存储配置
+oss:
+  # MinIO OSS配置
+  minio:
+    # todo 是否开启
+    enable: false
+    # 域名（格式：【ip:port】）
+    endpoint: 127.0.0.1:9000
+    # 是否开启TLS
+    enable-tls: false
+    # 用户的 SecretId
+    secret-id: xxxxxxxx
+    # 用户的 SecretKey
+    secret-key: xxxxxxxx
+    # 桶名称
+    bucket-name: xxxxxxxx
+
+
+# 讯飞星火api
+xunfei:
+  client:
+    appid: ${prod.xunfei.client.appid}
+    api-key: ${prod.xunfei.client.api-key}
+    api-secret: ${prod.xunfei.client.api-secret}

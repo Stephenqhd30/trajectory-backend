@@ -35,7 +35,11 @@ public class RedissonConfiguration {
 		// 构建 Redis 地址
 		String redisAddress = String.format("redis://%s:%s", redissonProperties.getHost(), redissonProperties.getPort());
 		// 使用单节点模式配置
-		config.useSingleServer().setAddress(redisAddress).setDatabase(redissonProperties.getDatabase());
+		config.useSingleServer()
+				.setAddress(redisAddress)
+				.setPassword(redissonProperties.getPassword())
+				.setDatabase(redissonProperties.getDatabase());
+		
 		// 2. 创建一个 RedissonClient 实例
 		// 同步和异步 API
 		return Redisson.create(config);

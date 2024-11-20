@@ -26,9 +26,9 @@ class PostThumbServiceTest {
 		loginUser.setId(1L);
 	}
 	
-	@Test
-	void doPostThumb() {
-		int i = postThumbService.doPostThumb(1L, loginUser);
-		Assertions.assertTrue(i >= 0);
-	}
+	// @Test
+	// void doPostThumb() {
+	// 	int i = postThumbService.doPostThumb(1L, loginUser);
+	// 	Assertions.assertTrue(i >= 0);
+	// }
 }

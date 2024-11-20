@@ -195,8 +195,7 @@ public class ChartController {
 		// 限制爬虫
 		ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
 		// 查询数据库
-		Page<Chart> chartPage = chartService.page(new
-						Page<>(current, size),
+		Page<Chart> chartPage = chartService.page(new Page<>(current, size),
 				chartService.getQueryWrapper(chartQueryRequest));
 		// 获取封装类
 		return ResultUtils.success(chartService.getChartVOPage(chartPage, request));
@@ -221,8 +220,6 @@ public class ChartController {
 		chartQueryRequest.setUserId(loginUser.getId());
 		long current = chartQueryRequest.getCurrent();
 		long size = chartQueryRequest.getPageSize();
-		// 限制爬虫
-		ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
 		// 查询数据库
 		Page<Chart> chartPage = chartService.page(new
 						Page<>(current, size),

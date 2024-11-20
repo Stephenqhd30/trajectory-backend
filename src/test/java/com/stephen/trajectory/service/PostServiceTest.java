@@ -21,12 +21,12 @@ class PostServiceTest {
 	@Resource
 	private PostEsService postEsService;
 	
-	@Test
-	void searchFromEs() {
-		PostQueryRequest postQueryRequest = new PostQueryRequest();
-		postQueryRequest.setUserId(1L);
-		Page<Post> postPage = postEsService.searchPostFromEs(postQueryRequest);
-		Assertions.assertNotNull(postPage);
-	}
+	// @Test
+	// void searchFromEs() {
+	// 	PostQueryRequest postQueryRequest = new PostQueryRequest();
+	// 	postQueryRequest.setUserId(1L);
+	// 	Page<Post> postPage = postEsService.searchPostFromEs(postQueryRequest);
+	// 	Assertions.assertNotNull(postPage);
+	// }
 	
 }

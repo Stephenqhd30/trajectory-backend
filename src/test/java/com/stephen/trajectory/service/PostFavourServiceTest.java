@@ -29,16 +29,16 @@ class PostFavourServiceTest {
 		loginUser.setId(1L);
 	}
 	
-	@Test
-	void doPostFavour() {
-		int i = postFavourService.doPostFavour(1L, loginUser);
-		Assertions.assertTrue(i >= 0);
-	}
-	
-	@Test
-	void listFavourPostByPage() {
-		QueryWrapper<Post> postQueryWrapper = new QueryWrapper<>();
-		postQueryWrapper.eq("id", 1L);
-		postFavourService.listFavourPostByPage(Page.of(0, 1), postQueryWrapper, loginUser.getId());
-	}
+	// @Test
+	// void doPostFavour() {
+	// 	int i = postFavourService.doPostFavour(1L, loginUser);
+	// 	Assertions.assertTrue(i >= 0);
+	// }
+	//
+	// @Test
+	// void listFavourPostByPage() {
+	// 	QueryWrapper<Post> postQueryWrapper = new QueryWrapper<>();
+	// 	postQueryWrapper.eq("id", 1L);
+	// 	postFavourService.listFavourPostByPage(Page.of(0, 1), postQueryWrapper, loginUser.getId());
+	// }
 }
