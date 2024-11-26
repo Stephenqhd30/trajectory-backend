@@ -1,14 +1,18 @@
 package com.stephen.trajectory.config.redisson;
 
+
 import com.stephen.trajectory.config.redisson.condition.RedissonCondition;
 import com.stephen.trajectory.config.redisson.properties.RedissonProperties;
-import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * Redisson 配置类
@@ -17,11 +21,12 @@ import org.springframework.context.annotation.Configuration;
  * @author: stephen qiu
  **/
 @Configuration
-@Data
 @Conditional(RedissonCondition.class)
+@Slf4j
 public class RedissonConfiguration {
 	
-	private final RedissonProperties redissonProperties;
+	@Resource
+	private RedissonProperties redissonProperties;
 	
 	/**
 	 * 配置 RedissonClient 实例
@@ -35,13 +40,17 @@ public class RedissonConfiguration {
 		// 构建 Redis 地址
 		String redisAddress = String.format("redis://%s:%s", redissonProperties.getHost(), redissonProperties.getPort());
 		// 使用单节点模式配置
-		config.useSingleServer()
-				.setAddress(redisAddress)
-				.setPassword(redissonProperties.getPassword())
-				.setDatabase(redissonProperties.getDatabase());
-		
+		config.useSingleServer().setAddress(redisAddress).setDatabase(redissonProperties.getDatabase());
 		// 2. 创建一个 RedissonClient 实例
 		// 同步和异步 API
 		return Redisson.create(config);
+	}
+	
+	/**
+	 * 依赖注入日志输出
+	 */
+	@PostConstruct
+	private void initDi() {
+		log.info("############ {} Configuration DI.", this.getClass().getSimpleName().split("\\$\\$")[0]);
 	}
 }

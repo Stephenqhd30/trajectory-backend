@@ -1,9 +1,9 @@
 package com.stephen.trajectory.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.stephen.trajectory.common.*;
-import com.stephen.trajectory.common.annotation.AuthCheck;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.constants.RedisConstant;
 import com.stephen.trajectory.constants.UserConstant;
@@ -105,7 +105,7 @@ public class TagController {
 	 * @return BaseResponse<Boolean>
 	 */
 	@PostMapping("/update")
-	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+	@SaCheckRole(UserConstant.ADMIN_ROLE)
 	public BaseResponse<Boolean> updateTag(@RequestBody TagUpdateRequest tagUpdateRequest) {
 		if (tagUpdateRequest == null || tagUpdateRequest.getId() <= 0) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -148,7 +148,7 @@ public class TagController {
 	 * @return BaseResponse<Page < Tag>>
 	 */
 	@PostMapping("/list/page")
-	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+	@SaCheckRole(UserConstant.ADMIN_ROLE)
 	public BaseResponse<Page<Tag>> listTagByPage(@RequestBody TagQueryRequest tagQueryRequest) {
 		long current = tagQueryRequest.getCurrent();
 		long size = tagQueryRequest.getPageSize();

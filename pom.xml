@@ -147,12 +147,6 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.2.3</version>
 		</dependency>
-		<!-- iText -->
-		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itextpdf</artifactId>
-			<version>5.5.13.3</version>
-		</dependency>
 		<!--转pdf-->
 		<dependency>
 			<groupId>com.documents4j</groupId>
@@ -170,11 +164,34 @@
 			<artifactId>hutool-all</artifactId>
 			<version>5.8.32</version>
 		</dependency>
-		<!-- JWT -->
+		<!-- sa-token 权限认证, 在线文档：https://sa-token.cc/ -->
 		<dependency>
-			<groupId>com.auth0</groupId>
-			<artifactId>java-jwt</artifactId>
-			<version>4.4.0</version>
+			<groupId>cn.dev33</groupId>
+			<artifactId>sa-token-spring-boot-starter</artifactId>
+			<version>1.39.0</version>
+		</dependency>
+		<!-- Sa-Token 整合 SpringAOP 实现注解鉴权 -->
+		<dependency>
+			<groupId>cn.dev33</groupId>
+			<artifactId>sa-token-spring-aop</artifactId>
+			<version>1.39.0</version>
+		</dependency>
+		<!-- Sa-Token 整合 Redis （使用 jdk 默认序列化方式） -->
+		<dependency>
+			<groupId>cn.dev33</groupId>
+			<artifactId>sa-token-redis</artifactId>
+			<version>1.39.0</version>
+		</dependency>
+		<!-- 提供redis连接池 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
+		</dependency>
+		<!-- Sa-Token 整合 jwt -->
+		<dependency>
+			<groupId>cn.dev33</groupId>
+			<artifactId>sa-token-jwt</artifactId>
+			<version>1.39.0</version>
 		</dependency>
 		<!-- redisson -->
 		<dependency>
@@ -194,12 +211,6 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>

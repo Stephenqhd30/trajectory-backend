@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -13,8 +14,9 @@ import java.util.List;
  * @create: 2024-09-22 20:22
  **/
 @Data
-public class TagDTO {
+public class TagDTO implements Serializable {
 	
+	private static final long serialVersionUID = 5290147110494415196L;
 	/**
 	 * 标签 id
 	 */
@@ -31,7 +33,8 @@ public class TagDTO {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class TagChildren {
+	public static class TagChildren implements Serializable{
+		private static final long serialVersionUID = 2276284075382594090L;
 		/**
 		 * 标签子节点 id
 		 */

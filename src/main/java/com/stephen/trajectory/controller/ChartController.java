@@ -1,10 +1,10 @@
 package com.stephen.trajectory.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stephen.trajectory.common.*;
-import com.stephen.trajectory.common.annotation.AuthCheck;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.constants.UserConstant;
 import com.stephen.trajectory.manager.ai.AIManager;
@@ -118,7 +118,7 @@ public class ChartController {
 	 * <Boolean>}
 	 */
 	@PostMapping("/update")
-	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+	@SaCheckRole(UserConstant.ADMIN_ROLE)
 	public BaseResponse<Boolean> updateChart(@RequestBody ChartUpdateRequest chartUpdateRequest) {
 		if (chartUpdateRequest == null || chartUpdateRequest.getId() <= 0) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -168,7 +168,7 @@ public class ChartController {
 	 * <Chart>>}
 	 */
 	@PostMapping("/list/page")
-	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+	@SaCheckRole(UserConstant.ADMIN_ROLE)
 	public BaseResponse<Page<Chart>> listChartByPage(@RequestBody ChartQueryRequest chartQueryRequest) {
 		long current = chartQueryRequest.getCurrent();
 		long size = chartQueryRequest.getPageSize();

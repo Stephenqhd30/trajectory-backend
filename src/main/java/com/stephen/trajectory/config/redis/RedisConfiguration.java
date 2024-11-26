@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.stephen.trajectory.config.redis.condition.RedisCondition;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +15,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -21,6 +25,8 @@ import javax.annotation.Resource;
  * @author: stephen qiu
  **/
 @Configuration
+@Conditional(RedisCondition.class)
+@Slf4j
 public class RedisConfiguration {
 	
 	@Resource
@@ -31,7 +37,7 @@ public class RedisConfiguration {
 	 *
 	 * @return 配置好的 RedisTemplate 实例
 	 */
-	@Bean
+	@Bean("redisTemplateBean")
 	public RedisTemplate<String, Object> redisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		// 设置 Redis 连接工厂
@@ -61,5 +67,13 @@ public class RedisConfiguration {
 		// 必须设置，否则无法序列化实体类对象
 		objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
 		return new GenericJackson2JsonRedisSerializer(objectMapper);
+	}
+	
+	/**
+	 * 依赖注入日志输出
+	 */
+	@PostConstruct
+	private void initDi() {
+		log.info("############ {} Configuration DI.", this.getClass().getSimpleName().split("\\$\\$")[0]);
 	}
 }

@@ -16,7 +16,7 @@ import com.stephen.trajectory.model.vo.ChartVO;
 import com.stephen.trajectory.model.vo.UserVO;
 import com.stephen.trajectory.service.ChartService;
 import com.stephen.trajectory.service.UserService;
-import com.stephen.trajectory.utils.SqlUtils;
+import com.stephen.trajectory.utils.sql.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;

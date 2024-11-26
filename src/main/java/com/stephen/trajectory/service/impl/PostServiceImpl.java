@@ -20,7 +20,7 @@ import com.stephen.trajectory.model.vo.PostVO;
 import com.stephen.trajectory.model.vo.UserVO;
 import com.stephen.trajectory.service.PostService;
 import com.stephen.trajectory.service.UserService;
-import com.stephen.trajectory.utils.SqlUtils;
+import com.stephen.trajectory.utils.sql.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -173,6 +173,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		if (CollUtil.isEmpty(postList)) {
 			return postVOPage;
 		}
+		// 获取登录用户信息
+		User loginUser = userService.getLoginUserPermitNull(request);
 		// 1. 异步获取用户信息
 		CompletableFuture<Map<Long, List<User>>> userMapFuture = CompletableFuture.supplyAsync(() -> {
 			Set<Long> userIdSet = postList.stream().map(Post::getUserId).collect(Collectors.toSet());
@@ -182,7 +184,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 2. 异步获取点赞状态
 		CompletableFuture<Map<Long, Boolean>> thumbMapFuture = CompletableFuture.supplyAsync(() -> {
 			Map<Long, Boolean> postIdHasThumbMap = new HashMap<>();
-			User loginUser = userService.getLoginUserPermitNull(request);
 			if (loginUser != null) {
 				Set<Long> postIdSet = postList.stream().map(Post::getId).collect(Collectors.toSet());
 				QueryWrapper<PostThumb> postThumbQueryWrapper = new QueryWrapper<>();
@@ -196,7 +197,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		// 3. 异步获取收藏状态
 		CompletableFuture<Map<Long, Boolean>> favourMapFuture = CompletableFuture.supplyAsync(() -> {
 			Map<Long, Boolean> postIdHasFavourMap = new HashMap<>();
-			User loginUser = userService.getLoginUserPermitNull(request);
 			if (loginUser != null) {
 				Set<Long> postIdSet = postList.stream().map(Post::getId).collect(Collectors.toSet());
 				QueryWrapper<PostFavour> postFavourQueryWrapper = new QueryWrapper<>();
@@ -209,6 +209,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
 		});
 		
 		try {
+			// 等待所有的异步任务执行完毕
+			
 			// 获取异步执行结果
 			Map<Long, List<User>> userIdUserListMap = userMapFuture.get();
 			Map<Long, Boolean> postIdHasThumbMap = thumbMapFuture.get();

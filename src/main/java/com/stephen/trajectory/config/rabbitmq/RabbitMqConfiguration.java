@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
+
 /**
  * 消息队列RabbitMQ实例配置
  *
@@ -50,5 +52,13 @@ public class RabbitMqConfiguration {
 					returnedMessage.getRoutingKey());
 		});
 		return rabbitTemplate;
+	}
+	
+	/**
+	 * 依赖注入日志输出
+	 */
+	@PostConstruct
+	private void initDi() {
+		log.info("############ {} Configuration DI.", this.getClass().getSimpleName().split("\\$\\$")[0]);
 	}
 }

@@ -1,5 +1,6 @@
 package com.stephen.trajectory.manager.ai;
 
+import com.stephen.trajectory.config.ai.condition.SparkAICondition;
 import io.github.briqt.spark4j.SparkClient;
 import io.github.briqt.spark4j.constant.SparkApiVersion;
 import io.github.briqt.spark4j.exception.SparkException;
@@ -8,6 +9,7 @@ import io.github.briqt.spark4j.model.SparkSyncChatResponse;
 import io.github.briqt.spark4j.model.request.SparkRequest;
 import io.github.briqt.spark4j.model.response.SparkTextUsage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,6 +23,7 @@ import java.util.List;
  **/
 @Slf4j
 @Service
+@Conditional(SparkAICondition.class)
 public class AIManager {
 	
 	@Resource

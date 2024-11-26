@@ -75,4 +75,9 @@ public class LoginUserVO implements Serializable {
 	 */
 	private List<String> tags;
 	
+	/**
+	 * 登录令牌
+	 */
+	private String token;
+	
 }

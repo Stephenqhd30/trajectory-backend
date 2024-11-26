@@ -1,4 +1,4 @@
-package com.stephen.trajectory.utils;
+package com.stephen.trajectory.utils.sql;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,17 +1,21 @@
 package com.stephen.trajectory.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Pair;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.exception.ExcelAnalysisException;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.stephen.trajectory.aop.listener.UserExcelListener;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.common.exception.BusinessException;
+import com.stephen.trajectory.config.secure.utils.DeviceUtils;
 import com.stephen.trajectory.constants.CommonConstant;
 import com.stephen.trajectory.constants.RedisConstant;
 import com.stephen.trajectory.constants.SaltConstant;
@@ -25,9 +29,9 @@ import com.stephen.trajectory.model.enums.user.UserRoleEnum;
 import com.stephen.trajectory.model.vo.LoginUserVO;
 import com.stephen.trajectory.model.vo.UserVO;
 import com.stephen.trajectory.service.UserService;
-import com.stephen.trajectory.utils.SqlUtils;
 import com.stephen.trajectory.utils.regex.RegexUtils;
 import com.stephen.trajectory.utils.similarity.CosineSimilarityUtil;
+import com.stephen.trajectory.utils.sql.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -85,6 +89,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		// todo 补充校验规则
 		if (StringUtils.isNotBlank(userAccount)) {
 			ThrowUtils.throwIf(userAccount.length() < 4 || userAccount.length() > 20, ErrorCode.PARAMS_ERROR, "账号不能小于4位，不能多于20位");
+		}
+		if (StringUtils.isNotBlank(userName)) {
+			ThrowUtils.throwIf(userName.length() < 4 || userName.length() > 20, ErrorCode.PARAMS_ERROR, "用户账号过短");
 		}
 		if (StringUtils.isNotBlank(userProfile)) {
 			ThrowUtils.throwIf(userProfile.length() > 50, ErrorCode.PARAMS_ERROR, "用户简介不能多余50字");
@@ -170,17 +177,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		// 2. 加密
 		String encryptPassword = DigestUtils.md5DigestAsHex((SaltConstant.SALT + userPassword).getBytes());
 		// 查询用户是否存在
-		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-		queryWrapper.eq("userAccount", userAccount);
-		queryWrapper.eq("userPassword", encryptPassword);
-		User user = this.baseMapper.selectOne(queryWrapper);
+		LambdaQueryWrapper<User> eq = Wrappers.lambdaQuery(User.class)
+				.eq(User::getUserAccount, userAccount)
+				.eq(User::getUserPassword, encryptPassword);
+		User user = this.getOne(eq);
 		// 用户不存在
 		if (user == null) {
 			log.info("user login failed, userAccount cannot match userPassword");
 			throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
 		}
 		// 3. 记录用户的登录态
-		request.getSession().setAttribute(UserConstant.USER_LOGIN_STATE, user);
+		// 使用Sa-Token登录，并指定设备同端登录互斥
+		StpUtil.login(user.getId(), DeviceUtils.getRequestDevice(request));
+		StpUtil.getSession().set(UserConstant.USER_LOGIN_STATE, user);
 		return this.getLoginUserVO(user);
 	}
 	
@@ -192,16 +201,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	 */
 	@Override
 	public User getLoginUser(HttpServletRequest request) {
-		// 先判断是否已登录
-		Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
-		User currentUser = (User) userObj;
-		if (currentUser == null || currentUser.getId() == null) {
-			throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
+		// 先判断是否已经登录
+		Object loginUserId = StpUtil.getLoginIdDefaultNull();
+		if (loginUserId == null) {
+			throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
 		}
 		// 从数据库查询（追求性能的话可以注释，直接走缓存）
-		long userId = currentUser.getId();
-		currentUser = this.getById(userId);
-		if (currentUser == null) {
+		// StpUtil.getSession().get(UserConstant.USER_LOGIN_STATE);
+		User currentUser = this.getById((String) loginUserId);
+		if (currentUser == null || currentUser.getId() == null) {
 			throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
 		}
 		return currentUser;
@@ -216,8 +224,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	@Override
 	public User getLoginUserPermitNull(HttpServletRequest request) {
 		// 先判断是否已登录
-		Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
-		User currentUser = (User) userObj;
+		User currentUser = (User) StpUtil.getSession().get(UserConstant.USER_LOGIN_STATE);
 		if (currentUser == null || currentUser.getId() == null) {
 			return null;
 		}
@@ -235,8 +242,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	@Override
 	public boolean isAdmin(HttpServletRequest request) {
 		// 仅管理员可查询
-		Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
-		User user = (User) userObj;
+		User user = (User) StpUtil.getSession().get(UserConstant.USER_LOGIN_STATE);
 		return isAdmin(user);
 	}
 	
@@ -249,15 +255,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	 * 用户注销
 	 *
 	 * @param request request
-	 * @return boolean 是否为管理员
+	 * @return boolean 是否退出成功
 	 */
 	@Override
 	public boolean userLogout(HttpServletRequest request) {
-		if (request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE) == null) {
-			throw new BusinessException(ErrorCode.OPERATION_ERROR, "未登录");
-		}
+		// 判断是否登录
+		StpUtil.checkLogin();
 		// 移除登录态
-		request.getSession().removeAttribute(UserConstant.USER_LOGIN_STATE);
+		StpUtil.logout();
 		return true;
 	}
 	
@@ -278,6 +283,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		BeanUtils.copyProperties(user, loginUserVO);
 		String tags = user.getTags();
 		loginUserVO.setTags(JSONUtil.toList(tags, String.class));
+		// 设置将token保存到登录用户信息中
+		loginUserVO.setToken(StpUtil.getTokenInfo().getTokenValue());
 		return loginUserVO;
 	}
 	

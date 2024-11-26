@@ -1,9 +1,9 @@
 package com.stephen.trajectory.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.stephen.trajectory.common.*;
-import com.stephen.trajectory.common.annotation.AuthCheck;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.constants.SaltConstant;
 import com.stephen.trajectory.constants.UserConstant;
@@ -118,7 +118,7 @@ public class UserController {
 	 * @return BaseResponse<Long>
 	 */
 	@PostMapping("/add")
-	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+	@SaCheckRole(UserConstant.ADMIN_ROLE)
 	public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest, HttpServletRequest request) {
 		ThrowUtils.throwIf(userAddRequest == null, ErrorCode.PARAMS_ERROR);
 		// todo 在此处将实体类和 DTO 进行转换
@@ -218,7 +218,7 @@ public class UserController {
 	 * @return BaseResponse<User>
 	 */
 	@GetMapping("/get")
-	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+	@SaCheckRole(UserConstant.ADMIN_ROLE)
 	public BaseResponse<User> getUserById(long id, HttpServletRequest request) {
 		ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
 		User user = userService.getById(id);
@@ -252,7 +252,7 @@ public class UserController {
 	 * @return BaseResponse<Page < User>>
 	 */
 	@PostMapping("/list/page")
-	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+	@SaCheckRole(UserConstant.ADMIN_ROLE)
 	public BaseResponse<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest,
 	                                               HttpServletRequest request) {
 		long current = userQueryRequest.getCurrent();

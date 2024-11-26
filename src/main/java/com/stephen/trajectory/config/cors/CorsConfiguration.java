@@ -1,8 +1,11 @@
 package com.stephen.trajectory.config.cors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.PostConstruct;
 
 /**
  * 全局跨域配置
@@ -10,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author stephen qiu
  */
 @Configuration
+@Slf4j
 public class CorsConfiguration implements WebMvcConfigurer {
 	
 	@Override
@@ -23,5 +27,13 @@ public class CorsConfiguration implements WebMvcConfigurer {
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 				.allowedHeaders("*")
 				.exposedHeaders("*");
+	}
+	
+	/**
+	 * 依赖注入日志输出
+	 */
+	@PostConstruct
+	private void initDi() {
+		log.info("############ {} Configuration DI.", this.getClass().getSimpleName().split("\\$\\$")[0]);
 	}
 }

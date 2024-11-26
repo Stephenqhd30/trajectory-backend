@@ -1,42 +1,44 @@
 package com.stephen.trajectory.config.ai;
 
+import com.stephen.trajectory.config.ai.condition.SparkAICondition;
+import com.stephen.trajectory.config.ai.properties.SparkAIProperties;
 import io.github.briqt.spark4j.SparkClient;
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
 /**
+ * 讯飞星火AI调用
+ *
  * @author: stephen qiu
- * @create: 2024-07-01 15:53
  **/
 @Configuration
-@Data
-@ConfigurationProperties(prefix = "xunfei.client")
+@Slf4j
+@Conditional(SparkAICondition.class)
 public class SparkAIConfiguration {
 	
-	/**
-	 * appid
-	 */
-	private String appid;
-	
-	/**
-	 * apiKey
-	 */
-	private String apiKey;
+	@Resource
+	private SparkAIProperties properties;
 	
 	
-	/**
-	 * apiSecret
-	 */
-	private String apiSecret;
-	
-	@Bean
+	@Bean("sparkClient")
 	public SparkClient sparkClient() {
 		SparkClient sparkClient = new SparkClient();
-		sparkClient.apiKey = apiKey;
-		sparkClient.apiSecret = apiSecret;
-		sparkClient.appid = appid;
+		sparkClient.apiKey = properties.getApiKey();
+		sparkClient.apiSecret = properties.getApiSecret();
+		sparkClient.appid = properties.getAppid();
 		return sparkClient;
+	}
+	
+	/**
+	 * 依赖注入日志输出
+	 */
+	@PostConstruct
+	private void initDi() {
+		log.info("############ {} Configuration DI.", this.getClass().getSimpleName().split("\\$\\$")[0]);
 	}
 }

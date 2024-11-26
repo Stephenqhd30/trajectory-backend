@@ -1,11 +1,11 @@
 package com.stephen.trajectory.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.alibaba.excel.EasyExcel;
 import com.stephen.trajectory.common.BaseResponse;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ResultUtils;
 import com.stephen.trajectory.common.ThrowUtils;
-import com.stephen.trajectory.common.annotation.AuthCheck;
 import com.stephen.trajectory.constants.UserConstant;
 import com.stephen.trajectory.model.enums.user.UserGenderEnum;
 import com.stephen.trajectory.model.enums.user.UserRoleEnum;
@@ -46,7 +46,7 @@ public class ExcelController {
 	 * @return 导入结果
 	 */
 	@PostMapping("/user/import")
-	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+	@SaCheckRole(UserConstant.ADMIN_ROLE)
 	public BaseResponse<Map<String, Object>> importUserDataByExcel(@RequestPart("file") MultipartFile file) {
 		// 检查文件是否为空
 		ThrowUtils.throwIf(file.isEmpty(), ErrorCode.PARAMS_ERROR, "文件不能为空");
@@ -80,7 +80,7 @@ public class ExcelController {
 	 * @param response response
 	 */
 	@GetMapping("/user/download")
-	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+	@SaCheckRole(UserConstant.ADMIN_ROLE)
 	public void download(HttpServletResponse response) throws IOException {
 		// 获取数据，根据自身业务修改
 		List<UserExcelVO> userExcelVOList = userService.list().stream().map(user -> {

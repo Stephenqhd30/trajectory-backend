@@ -1,9 +1,9 @@
 package com.stephen.trajectory.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.stephen.trajectory.common.*;
-import com.stephen.trajectory.common.annotation.AuthCheck;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.constants.UserConstant;
 import com.stephen.trajectory.model.dto.post.PostAddRequest;
@@ -102,7 +102,7 @@ public class PostController {
 	 * @return BaseResponse<Boolean>
 	 */
 	@PostMapping("/update")
-	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+	@SaCheckRole(UserConstant.ADMIN_ROLE)
 	public BaseResponse<Boolean> updatePost(@RequestBody PostUpdateRequest postUpdateRequest) {
 		ThrowUtils.throwIf(postUpdateRequest == null || postUpdateRequest.getId() <= 0, ErrorCode.PARAMS_ERROR);
 		Post post = new Post();
@@ -146,7 +146,7 @@ public class PostController {
 	 * @return BaseResponse<Page < Post>>
 	 */
 	@PostMapping("/list/page")
-	@AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+	@SaCheckRole(UserConstant.ADMIN_ROLE)
 	public BaseResponse<Page<Post>> listPostByPage(@RequestBody PostQueryRequest postQueryRequest) {
 		long current = postQueryRequest.getCurrent();
 		long size = postQueryRequest.getPageSize();

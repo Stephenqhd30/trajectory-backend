@@ -8,10 +8,12 @@ import com.qcloud.cos.region.Region;
 import com.stephen.trajectory.config.oss.cos.condition.CosCondition;
 import com.stephen.trajectory.config.oss.cos.properties.CosProperties;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -22,12 +24,13 @@ import javax.annotation.Resource;
 @Configuration
 @Data
 @Conditional(CosCondition.class)
+@Slf4j
 public class CosClientConfig {
 	
 	@Resource
 	private CosProperties cosProperties;
 	
-	@Bean
+	@Bean("cosClientBean")
 	public COSClient cosClient() {
 		// 初始化用户身份信息(secretId, secretKey)
 		COSCredentials cred = new BasicCOSCredentials(cosProperties.getAccessKey(), cosProperties.getSecretKey());
@@ -35,5 +38,13 @@ public class CosClientConfig {
 		ClientConfig clientConfig = new ClientConfig(new Region(cosProperties.getRegion()));
 		// 生成cos客户端
 		return new COSClient(cred, clientConfig);
+	}
+	
+	/**
+	 * 依赖注入日志输出
+	 */
+	@PostConstruct
+	private void initDi() {
+		log.info("############ {} Configuration DI.", this.getClass().getSimpleName().split("\\$\\$")[0]);
 	}
 }
