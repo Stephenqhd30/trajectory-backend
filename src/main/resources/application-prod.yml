@@ -89,7 +89,33 @@ oss:
 
 # 讯飞星火api
 xunfei:
+  enabled: true
   client:
     appid: ${prod.xunfei.client.appid}
     api-key: ${prod.xunfei.client.api-key}
     api-secret: ${prod.xunfei.client.api-secret}
+
+############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
+sa-token:
+  # todo 是否启用SaToken认证鉴权功能（此处为false并不是禁用SaToken，而是让SaToken相关注解失效，预先开启）
+  enable-sa: true
+  # todo 是否使用JWT格式的Token（建议如果没有开启redis配置就不要开启JWT格式的Token，预先关闭）
+  enable-jwt: true
+  # token 名称（同时也是 cookie 名称）
+  token-name: Authorization
+  # token有效期，单位s 默认30天, -1代表永不过期
+  timeout: 2592000
+  # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
+  active-timeout: -1
+  # 是否允许同一账号多地同时登录 （为 true 时允许一起登录, 为 false 时新登录挤掉旧登录）
+  is-concurrent: false
+  # 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token, 为 false 时每次登录新建一个 token）
+  is-share: true
+  # token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
+  token-style: uuid
+  # 是否输出操作日志
+  is-log: true
+  # token前缀  注意必须是 Bearer {token}, Bearer后面加空格
+  token-prefix: Bearer
+  # jwt秘钥
+  jwt-secret-key: ${prod.sa-token.jwt-secret-key}
