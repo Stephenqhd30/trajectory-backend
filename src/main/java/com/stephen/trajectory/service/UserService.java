@@ -115,6 +115,15 @@ public interface UserService extends IService<User> {
 	List<UserVO> getUserVO(List<User> userList, HttpServletRequest request);
 	
 	/**
+	 * 分页获取用户视图类
+	 *
+	 * @param userPage userPage
+	 * @param request  request
+	 * @return {@link Page {@link UserVO} }
+	 */
+	Page<UserVO> getUserVOPage(Page<User> userPage, HttpServletRequest request);
+	
+	/**
 	 * 获取查询条件
 	 *
 	 * @param userQueryRequest userQueryRequest
@@ -142,9 +151,9 @@ public interface UserService extends IService<User> {
 	/**
 	 * 分页获取余弦相似度匹配用户
 	 *
-	 * @param userVOPage
-	 * @param loginUser
-	 * @return
+	 * @param userVOPage userVOPage
+	 * @param loginUser  loginUser
+	 * @return {@link Page<UserVO> }
 	 */
 	Page<UserVO> cosMatchUserByPage(Page<UserVO> userVOPage, User loginUser);
 }

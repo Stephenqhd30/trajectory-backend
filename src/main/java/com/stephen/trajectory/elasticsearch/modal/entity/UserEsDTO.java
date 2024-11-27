@@ -1,4 +1,4 @@
-package com.stephen.trajectory.elasticsearch.entity;
+package com.stephen.trajectory.elasticsearch.modal.entity;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;

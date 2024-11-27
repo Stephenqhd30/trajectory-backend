@@ -3,7 +3,7 @@ package com.stephen.trajectory.elasticsearch.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.stephen.trajectory.constants.CommonConstant;
-import com.stephen.trajectory.elasticsearch.entity.UserEsDTO;
+import com.stephen.trajectory.elasticsearch.modal.entity.UserEsDTO;
 import com.stephen.trajectory.elasticsearch.service.UserEsService;
 import com.stephen.trajectory.mapper.UserMapper;
 import com.stephen.trajectory.model.dto.user.UserQueryRequest;

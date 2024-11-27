@@ -1,8 +1,8 @@
 package com.stephen.trajectory.job.once;
 
 import cn.hutool.core.collection.CollUtil;
-import com.stephen.trajectory.elasticsearch.entity.UserEsDTO;
 import com.stephen.trajectory.elasticsearch.mapper.UserEsDao;
+import com.stephen.trajectory.elasticsearch.modal.entity.UserEsDTO;
 import com.stephen.trajectory.model.entity.User;
 import com.stephen.trajectory.service.UserService;
 import lombok.extern.slf4j.Slf4j;

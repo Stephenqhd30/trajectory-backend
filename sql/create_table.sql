@@ -23,11 +23,14 @@ create table user
     userEmail    varchar(256)                           null comment '用户邮箱',
     userProfile  varchar(512)                           null comment '用户简介',
     userRole     varchar(256) default 'user'            not null comment '用户角色：user/admin/ban',
+    tags         varchar(1024)                          null comment '标签列表(使用JSON字符数组)',
     editTime     datetime     default CURRENT_TIMESTAMP null comment '编辑时间',
     createTime   datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime   datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete     tinyint      default 0                 not null comment '是否删除'
-) comment '用户' collate = utf8mb4_unicode_ci;
+)
+    comment '用户' collate = utf8mb4_unicode_ci
+                   row_format = DYNAMIC;
 
 
 -- 帖子表
@@ -51,108 +54,41 @@ create index idx_userId
     on post (userId);
 
 -- 帖子点赞表（硬删除）
-create table if not exists post_thumb
+create table post_thumb
 (
-    id
-        bigint
-        auto_increment
-        comment
-            'id'
-        primary
-            key,
-    postId
-        bigint
-        not
-            null
-        comment
-            '帖子 id',
-    userId
-        bigint
-        not
-            null
-        comment
-            '创建用户 id',
-    createTime
-        datetime
-        default
-            CURRENT_TIMESTAMP
-        not
-            null
-        comment
-            '创建时间',
-    updateTime
-        datetime
-        default
-            CURRENT_TIMESTAMP
-        not
-            null
-        on
-            update
-            CURRENT_TIMESTAMP
-        comment
-            '更新时间',
-    index
-        idx_postId
-        (
-         postId
-            ),
-    index idx_userId
-        (
-         userId
-            )
-) comment '帖子点赞';
+    id         bigint auto_increment comment 'id'
+        primary key,
+    postId     bigint                             not null comment '帖子 id',
+    userId     bigint                             not null comment '创建用户 id',
+    createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+)
+    comment '帖子点赞' row_format = DYNAMIC;
+
+create index idx_postId
+    on post_thumb (postId);
+
+create index idx_userId
+    on post_thumb (userId);
+
 
 -- 帖子收藏表（硬删除）
-create table if not exists post_favour
+create table post_favour
 (
-    id
-        bigint
-        auto_increment
-        comment
-            'id'
-        primary
-            key,
-    postId
-        bigint
-        not
-            null
-        comment
-            '帖子 id',
-    userId
-        bigint
-        not
-            null
-        comment
-            '创建用户 id',
-    createTime
-        datetime
-        default
-            CURRENT_TIMESTAMP
-        not
-            null
-        comment
-            '创建时间',
-    updateTime
-        datetime
-        default
-            CURRENT_TIMESTAMP
-        not
-            null
-        on
-            update
-            CURRENT_TIMESTAMP
-        comment
-            '更新时间',
-    index
-        idx_postId
-        (
-         postId
-            ),
-    index idx_userId
-        (
-         userId
-            )
-) comment '帖子收藏';
+    id         bigint auto_increment comment 'id'
+        primary key,
+    postId     bigint                             not null comment '帖子 id',
+    userId     bigint                             not null comment '创建用户 id',
+    createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+)
+    comment '帖子收藏' row_format = DYNAMIC;
+
+create index idx_postId
+    on post_favour (postId);
+
+create index idx_userId
+    on post_favour (userId);
 
 -- 标签表
 create table tag

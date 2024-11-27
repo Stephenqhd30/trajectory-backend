@@ -26,6 +26,11 @@ spring:
     port: ${prod.redis.port}
     timeout: ${prod.redis.timeout}
     password: ${prod.redis.password}
+  # Elasticsearch 配置
+  # todo 需替换配置，然后取消注释
+  elasticsearch:
+    enabled: false
+    uris: ${prod.elasticsearch.uris}
   # 文件上传
   servlet:
     multipart:

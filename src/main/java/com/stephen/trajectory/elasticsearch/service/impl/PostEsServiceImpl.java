@@ -3,7 +3,7 @@ package com.stephen.trajectory.elasticsearch.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.stephen.trajectory.constants.CommonConstant;
-import com.stephen.trajectory.elasticsearch.entity.PostEsDTO;
+import com.stephen.trajectory.elasticsearch.modal.entity.PostEsDTO;
 import com.stephen.trajectory.elasticsearch.service.PostEsService;
 import com.stephen.trajectory.mapper.PostMapper;
 import com.stephen.trajectory.model.dto.post.PostQueryRequest;
@@ -40,7 +40,6 @@ public class PostEsServiceImpl implements PostEsService {
 	
 	@Resource
 	private ElasticsearchRestTemplate elasticsearchRestTemplate;
-	
 	
 	@Resource
 	private PostMapper postMapper;
@@ -99,7 +98,6 @@ public class PostEsServiceImpl implements PostEsService {
 				});
 			}
 		}
-		
 		page.setRecords(resourceList);
 		return page;
 	}

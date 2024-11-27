@@ -5,6 +5,9 @@ import com.stephen.trajectory.common.BaseResponse;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ResultUtils;
 import com.stephen.trajectory.common.ThrowUtils;
+import com.stephen.trajectory.elasticsearch.manager.SearchFacade;
+import com.stephen.trajectory.elasticsearch.modal.dto.SearchRequest;
+import com.stephen.trajectory.elasticsearch.modal.vo.SearchVO;
 import com.stephen.trajectory.elasticsearch.service.PostEsService;
 import com.stephen.trajectory.elasticsearch.service.UserEsService;
 import com.stephen.trajectory.model.dto.post.PostQueryRequest;
@@ -34,7 +37,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/es")
 @Slf4j
-public class ElasticsearchController {
+public class SearchController {
+	
+	@Resource
+	private SearchFacade searchFacade;
 	
 	@Resource
 	private PostEsService postEsService;
@@ -84,5 +90,17 @@ public class ElasticsearchController {
 		List<UserVO> userVO = userService.getUserVO(userPage.getRecords(), request);
 		userVOPage.setRecords(userVO);
 		return ResultUtils.success(userVOPage);
+	}
+	
+	/**
+	 * 使用门面模式进行重构
+	 * 聚合搜索查询
+	 *
+	 * @param searchRequest searchRequest
+	 * @return {@link BaseResponse <{@link SearchVO } <{@link Object}>>}
+	 */
+	@PostMapping("/all")
+	public BaseResponse<SearchVO<Object>> doSearchAll(@RequestBody SearchRequest searchRequest, HttpServletRequest request) {
+		return ResultUtils.success(searchFacade.searchAll(searchRequest, request));
 	}
 }

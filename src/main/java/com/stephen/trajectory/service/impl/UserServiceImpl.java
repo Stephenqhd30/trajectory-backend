@@ -318,6 +318,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	}
 	
 	/**
+	 * 分页获取用户视图类
+	 *
+	 * @param userPage userPage
+	 * @param request  request
+	 * @return {@link Page {@link UserVO} }
+	 */
+	@Override
+	public Page<UserVO> getUserVOPage(Page<User> userPage, HttpServletRequest request) {
+		List<User> userList = userPage.getRecords();
+		Page<UserVO> userVOPage = new Page<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
+		if (CollUtil.isEmpty(userList)) {
+			return userVOPage;
+		}
+		// 填充信息
+		List<UserVO> userVOList = userList.stream().map(UserVO::objToVo).collect(Collectors.toList());
+		userVOPage.setRecords(userVOList);
+		
+		return userVOPage;
+	}
+	
+	/**
 	 * 获取查询封装类
 	 *
 	 * @param userQueryRequest userQueryRequest

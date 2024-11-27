@@ -33,9 +33,9 @@ public class AuthInterceptor {
 	/**
 	 * 执行拦截
 	 *
-	 * @param joinPoint
-	 * @param authCheck
-	 * @return
+	 * @param joinPoint joinPoint
+	 * @param authCheck authCheck
+	 * @return {@link Object}
 	 */
 	@Around("@annotation(authCheck)")
 	public Object doInterceptor(ProceedingJoinPoint joinPoint, AuthCheck authCheck) throws Throwable {

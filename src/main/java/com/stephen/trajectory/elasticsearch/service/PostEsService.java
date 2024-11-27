@@ -1,7 +1,7 @@
 package com.stephen.trajectory.elasticsearch.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.stephen.trajectory.elasticsearch.entity.PostEsDTO;
+import com.stephen.trajectory.elasticsearch.modal.entity.PostEsDTO;
 import com.stephen.trajectory.model.dto.post.PostQueryRequest;
 import com.stephen.trajectory.model.entity.Post;
 import org.elasticsearch.index.query.BoolQueryBuilder;

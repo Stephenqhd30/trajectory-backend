@@ -1,6 +1,6 @@
 package com.stephen.trajectory.elasticsearch;
 
-import com.stephen.trajectory.elasticsearch.entity.PostEsDTO;
+import com.stephen.trajectory.elasticsearch.modal.entity.PostEsDTO;
 import com.stephen.trajectory.elasticsearch.mapper.PostEsDao;
 import com.stephen.trajectory.elasticsearch.service.PostEsService;
 import com.stephen.trajectory.model.dto.post.PostQueryRequest;
