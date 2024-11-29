@@ -39,6 +39,8 @@ spring:
   # todo 需替换配置，然后取消注释
   elasticsearch:
     uris: ${dev.elasticsearch.uris}
+    username: ${dev.elasticsearch.username}
+    password: ${dev.elasticsearch.password}
   # RabbitMQ配置
   rabbitmq:
     # todo 是否开启RabbitMQ（预先关闭）

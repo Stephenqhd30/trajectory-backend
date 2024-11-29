@@ -29,8 +29,9 @@ spring:
   # Elasticsearch 配置
   # todo 需替换配置，然后取消注释
   elasticsearch:
-    enabled: false
     uris: ${prod.elasticsearch.uris}
+    username: ${prod.elasticsearch.username}
+    password: ${prod.elasticsearch.password}
   # 文件上传
   servlet:
     multipart:
