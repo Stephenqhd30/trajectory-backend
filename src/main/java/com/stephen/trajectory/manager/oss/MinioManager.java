@@ -1,6 +1,5 @@
 package com.stephen.trajectory.manager.oss;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.common.exception.BusinessException;

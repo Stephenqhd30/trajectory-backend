@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -22,7 +21,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Conditional(MinioCondition.class)
-@Component
+@Configuration
 public class MinioClientConfig {
 	
 	@Resource
@@ -33,7 +32,7 @@ public class MinioClientConfig {
 	 *
 	 * @return 返回MinioClient客户端
 	 */
-	@Bean()
+	@Bean
 	public MinioClient minioClient() {
 		try {
 			return MinioClient.builder()

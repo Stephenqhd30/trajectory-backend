@@ -12,11 +12,11 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
  * @author stephen qiu
  */
 public class JwtCondition implements Condition {
-
-    @Override
-    public boolean matches(ConditionContext context, @NotNull AnnotatedTypeMetadata metadata) {
-        String property = context.getEnvironment().getProperty("sa-token.enable-jwt");
-        return StringUtils.equals(Boolean.TRUE.toString(), property);
-    }
-
+	
+	@Override
+	public boolean matches(ConditionContext context, @NotNull AnnotatedTypeMetadata metadata) {
+		String property = context.getEnvironment().getProperty("sa-token.enable-jwt");
+		return StringUtils.equals(Boolean.TRUE.toString(), property);
+	}
+	
 }

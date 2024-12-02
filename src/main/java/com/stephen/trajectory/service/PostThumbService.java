@@ -38,7 +38,7 @@ public interface PostThumbService extends IService<PostThumb> {
 	 *
 	 * @param page         page
 	 * @param queryWrapper queryWrapper
-	 * @param thumbUserId thumbUserId
+	 * @param thumbUserId  thumbUserId
 	 * @return {@link Page <Post>}
 	 */
 	Page<Post> listThumbPostByPage(IPage<Post> page, Wrapper<Post> queryWrapper, long thumbUserId);

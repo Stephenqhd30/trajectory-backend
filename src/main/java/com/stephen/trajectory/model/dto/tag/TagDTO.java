@@ -33,7 +33,7 @@ public class TagDTO implements Serializable {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class TagChildren implements Serializable{
+	public static class TagChildren implements Serializable {
 		private static final long serialVersionUID = 2276284075382594090L;
 		/**
 		 * 标签子节点 id

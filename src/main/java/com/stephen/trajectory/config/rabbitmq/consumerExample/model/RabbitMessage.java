@@ -17,17 +17,17 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class RabbitMessage implements Serializable {
-
-    /**
-     * 消息id
-     */
-    private String msgId;
-
-    /**
-     * 消息内容
-     */
-    private String msgText;
-
-    private static final long serialVersionUID = -5714803262626105938L;
-
+	
+	/**
+	 * 消息id
+	 */
+	private String msgId;
+	
+	/**
+	 * 消息内容
+	 */
+	private String msgText;
+	
+	private static final long serialVersionUID = -5714803262626105938L;
+	
 }

@@ -106,7 +106,7 @@ public class PostThumbServiceImpl extends ServiceImpl<PostThumbMapper, PostThumb
 	 *
 	 * @param page         page
 	 * @param queryWrapper queryWrapper
-	 * @param thumbUserId thumbUserId
+	 * @param thumbUserId  thumbUserId
 	 * @return {@link Page <Post>}
 	 */
 	@Override

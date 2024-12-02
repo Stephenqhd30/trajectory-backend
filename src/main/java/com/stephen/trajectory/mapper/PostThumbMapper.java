@@ -21,7 +21,7 @@ public interface PostThumbMapper extends BaseMapper<PostThumb> {
 	 *
 	 * @param page         page
 	 * @param queryWrapper queryWrapper
-	 * @param thumbUserId favourUserId
+	 * @param thumbUserId  favourUserId
 	 * @return {@link Page < Post >}
 	 */
 	Page<Post> listThumbPostByPage(IPage<Post> page, @Param(Constants.WRAPPER) Wrapper<Post> queryWrapper,

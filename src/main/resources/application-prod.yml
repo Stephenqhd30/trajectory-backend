@@ -82,14 +82,6 @@ mybatis-plus:
       logic-delete-field: isDelete # 全局逻辑删除的实体字段名
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
-# 对象存储
-cos:
-  client:
-    enable: true
-    accessKey: ${prod.cos.client.accessKey}
-    secretKey: ${prod.cos.client.secretKey}
-    region: ${prod.cos.client.region}
-    bucket: ${prod.cos.client.bucket}
 
 # Redisson 配置
 redisson:
@@ -103,18 +95,15 @@ oss:
   # MinIO OSS配置
   minio:
     # todo 是否开启
-    enable: false
+    enable: true
     # 域名（格式：【ip:port】）
-    endpoint: 127.0.0.1:9000
-    # 是否开启TLS
-    enable-tls: false
-    # 用户的 SecretId
-    secret-id: xxxxxxxx
+    endpoint: ${prod.oss.minio.endpoint}
+    # 用户的 AccessKey
+    accessKey: ${prod.oss.minio.accessKey}
     # 用户的 SecretKey
-    secret-key: xxxxxxxx
+    secretKey: ${prod.oss.minio.secretKey}
     # 桶名称
-    bucket-name: xxxxxxxx
-
+    bucket: ${prod.oss.minio.bucket}
 
 # 讯飞星火api
 xunfei:

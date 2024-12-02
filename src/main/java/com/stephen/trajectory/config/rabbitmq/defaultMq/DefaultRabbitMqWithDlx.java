@@ -26,121 +26,121 @@ import java.util.Map;
 @Component
 @Conditional(RabbitMqCondition.class)
 public class DefaultRabbitMqWithDlx extends BaseCustomizeMqWithDlx {
-
-    /**
-     * 默认的实例交换机名称
-     */
-    public static final String EXCHANGE_WITH_DLX_NAME = "exchange.with.dlx.default";
-
-    /**
-     * 默认的实例队列名称
-     */
-    public static final String QUEUE_WITH_DLX_NAME = "queue.with.dlx.default";
-
-    /**
-     * 默认的实例队列绑定关系的RoutingKey
-     */
-    public static final String BINDING_WITH_DLX_ROUTING_KEY = "binding.with.dlx.routing.key.default";
-
-    /**
-     * 默认的实例死信队列交换机名称
-     */
-    public static final String DLX_EXCHANGE_WITH_DLX_NAME = "dlx.exchange.with.dlx.default";
-
-    /**
-     * 默认的实例死信队列名称
-     */
-    public static final String DLX_QUEUE_WITH_DLX_NAME = "dlx.queue.with.dlx.default";
-
-    /**
-     * 默认的实例死信队列绑定关系的RoutingKey
-     */
-    public static final String DLX_BINDING_WITH_DLX_ROUTING_KEY = "dlx.binding.with.dlx.routing.key.default";
-
-    /**
-     * 注册默认的实例交换机
-     *
-     * @return 返回交换机实例
-     */
-    @Bean("defaultExchangeWithDlx")
-    public Exchange defaultExchangeWithDlx() {
-        return new TopicExchange(EXCHANGE_WITH_DLX_NAME, true, false, null);
-    }
-
-    /**
-     * 注册默认的实例死信队列交换机
-     */
-    @Bean("defaultDxlExchange")
-    public Exchange defaultDxlExchange() {
-        return new TopicExchange(DLX_EXCHANGE_WITH_DLX_NAME, true, false, null);
-    }
-
-    /**
-     * 注册默认的实例队列，同时配置死信队列
-     *
-     * @param connectionFactory 连接工厂接口
-     * @return 返回结果
-     */
-    @Bean("defaultQueueWithDlx")
-    public Queue defaultQueueWithDlx(ConnectionFactory connectionFactory) {
-        Map<String, Object> args = new HashMap<>(2);
-        // x-dead-letter-exchange    这里声明当前队列绑定的死信交换机
-        args.put("x-dead-letter-exchange", DLX_EXCHANGE_WITH_DLX_NAME);
-        // x-dead-letter-routing-key   这里声明当前队列的死信路由key
-        args.put("x-dead-letter-routing-key", DLX_BINDING_WITH_DLX_ROUTING_KEY);
-        Queue queue = new Queue(QUEUE_WITH_DLX_NAME, true, false, false, args);
-        RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
-        rabbitAdmin.setAutoStartup(true);
-        rabbitAdmin.declareQueue(queue);
-        return queue;
-    }
-
-    /**
-     * 注册默认的实例死信队列
-     *
-     * @param connectionFactory 连接工厂接口
-     * @return 返回结果
-     */
-    @Bean("defaultDxlQueue")
-    public Queue defaultDxlQueue(ConnectionFactory connectionFactory) {
-        Queue queue = new Queue(DLX_QUEUE_WITH_DLX_NAME, true, false, false, null);
-        RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
-        rabbitAdmin.setAutoStartup(true);
-        rabbitAdmin.declareQueue(queue);
-        return queue;
-    }
-
-
-    /**
-     * 注册默认的实例队列绑定关系
-     *
-     * @param defaultQueueWithDlx    注册实例队列方法名称
-     * @param defaultExchangeWithDlx 注册实例交换机方法名称
-     * @return 返回结果
-     */
-    @Bean("defaultBindingWithDlx")
-    public Binding defaultBindingWithDlx(@Qualifier("defaultQueueWithDlx") Queue defaultQueueWithDlx, @Qualifier("defaultExchangeWithDlx") Exchange defaultExchangeWithDlx) {
-        return BindingBuilder
-                .bind(defaultQueueWithDlx)
-                .to(defaultExchangeWithDlx)
-                .with(BINDING_WITH_DLX_ROUTING_KEY)
-                .noargs();
-    }
-
-    /**
-     * 注册默认的实例死信队列绑定关系
-     *
-     * @param defaultDxlQueue    注册实例死信队列方法名称
-     * @param defaultDxlExchange 注册实例死信队列交换机方法名称
-     * @return 返回结果
-     */
-    @Bean("defaultDxlBinding")
-    public Binding defaultDxlBinding(@Qualifier("defaultDxlQueue") Queue defaultDxlQueue, @Qualifier("defaultDxlExchange") Exchange defaultDxlExchange) {
-        return BindingBuilder
-                .bind(defaultDxlQueue)
-                .to(defaultDxlExchange)
-                .with(DLX_BINDING_WITH_DLX_ROUTING_KEY)
-                .noargs();
-    }
-
+	
+	/**
+	 * 默认的实例交换机名称
+	 */
+	public static final String EXCHANGE_WITH_DLX_NAME = "exchange.with.dlx.default";
+	
+	/**
+	 * 默认的实例队列名称
+	 */
+	public static final String QUEUE_WITH_DLX_NAME = "queue.with.dlx.default";
+	
+	/**
+	 * 默认的实例队列绑定关系的RoutingKey
+	 */
+	public static final String BINDING_WITH_DLX_ROUTING_KEY = "binding.with.dlx.routing.key.default";
+	
+	/**
+	 * 默认的实例死信队列交换机名称
+	 */
+	public static final String DLX_EXCHANGE_WITH_DLX_NAME = "dlx.exchange.with.dlx.default";
+	
+	/**
+	 * 默认的实例死信队列名称
+	 */
+	public static final String DLX_QUEUE_WITH_DLX_NAME = "dlx.queue.with.dlx.default";
+	
+	/**
+	 * 默认的实例死信队列绑定关系的RoutingKey
+	 */
+	public static final String DLX_BINDING_WITH_DLX_ROUTING_KEY = "dlx.binding.with.dlx.routing.key.default";
+	
+	/**
+	 * 注册默认的实例交换机
+	 *
+	 * @return 返回交换机实例
+	 */
+	@Bean("defaultExchangeWithDlx")
+	public Exchange defaultExchangeWithDlx() {
+		return new TopicExchange(EXCHANGE_WITH_DLX_NAME, true, false, null);
+	}
+	
+	/**
+	 * 注册默认的实例死信队列交换机
+	 */
+	@Bean("defaultDxlExchange")
+	public Exchange defaultDxlExchange() {
+		return new TopicExchange(DLX_EXCHANGE_WITH_DLX_NAME, true, false, null);
+	}
+	
+	/**
+	 * 注册默认的实例队列，同时配置死信队列
+	 *
+	 * @param connectionFactory 连接工厂接口
+	 * @return 返回结果
+	 */
+	@Bean("defaultQueueWithDlx")
+	public Queue defaultQueueWithDlx(ConnectionFactory connectionFactory) {
+		Map<String, Object> args = new HashMap<>(2);
+		// x-dead-letter-exchange    这里声明当前队列绑定的死信交换机
+		args.put("x-dead-letter-exchange", DLX_EXCHANGE_WITH_DLX_NAME);
+		// x-dead-letter-routing-key   这里声明当前队列的死信路由key
+		args.put("x-dead-letter-routing-key", DLX_BINDING_WITH_DLX_ROUTING_KEY);
+		Queue queue = new Queue(QUEUE_WITH_DLX_NAME, true, false, false, args);
+		RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
+		rabbitAdmin.setAutoStartup(true);
+		rabbitAdmin.declareQueue(queue);
+		return queue;
+	}
+	
+	/**
+	 * 注册默认的实例死信队列
+	 *
+	 * @param connectionFactory 连接工厂接口
+	 * @return 返回结果
+	 */
+	@Bean("defaultDxlQueue")
+	public Queue defaultDxlQueue(ConnectionFactory connectionFactory) {
+		Queue queue = new Queue(DLX_QUEUE_WITH_DLX_NAME, true, false, false, null);
+		RabbitAdmin rabbitAdmin = new RabbitAdmin(connectionFactory);
+		rabbitAdmin.setAutoStartup(true);
+		rabbitAdmin.declareQueue(queue);
+		return queue;
+	}
+	
+	
+	/**
+	 * 注册默认的实例队列绑定关系
+	 *
+	 * @param defaultQueueWithDlx    注册实例队列方法名称
+	 * @param defaultExchangeWithDlx 注册实例交换机方法名称
+	 * @return 返回结果
+	 */
+	@Bean("defaultBindingWithDlx")
+	public Binding defaultBindingWithDlx(@Qualifier("defaultQueueWithDlx") Queue defaultQueueWithDlx, @Qualifier("defaultExchangeWithDlx") Exchange defaultExchangeWithDlx) {
+		return BindingBuilder
+				.bind(defaultQueueWithDlx)
+				.to(defaultExchangeWithDlx)
+				.with(BINDING_WITH_DLX_ROUTING_KEY)
+				.noargs();
+	}
+	
+	/**
+	 * 注册默认的实例死信队列绑定关系
+	 *
+	 * @param defaultDxlQueue    注册实例死信队列方法名称
+	 * @param defaultDxlExchange 注册实例死信队列交换机方法名称
+	 * @return 返回结果
+	 */
+	@Bean("defaultDxlBinding")
+	public Binding defaultDxlBinding(@Qualifier("defaultDxlQueue") Queue defaultDxlQueue, @Qualifier("defaultDxlExchange") Exchange defaultDxlExchange) {
+		return BindingBuilder
+				.bind(defaultDxlQueue)
+				.to(defaultDxlExchange)
+				.with(DLX_BINDING_WITH_DLX_ROUTING_KEY)
+				.noargs();
+	}
+	
 }

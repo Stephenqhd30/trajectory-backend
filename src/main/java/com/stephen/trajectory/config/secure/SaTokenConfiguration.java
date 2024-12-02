@@ -33,6 +33,7 @@ public class SaTokenConfiguration implements WebMvcConfigurer {
 	 */
 	private static final List<String> SA_TOKEN_NOT_NEED_INTERCEPT_URI = new ArrayList<>() {
 		private static final long serialVersionUID = 5839574116900754104L;
+		
 		{
 			add("/");
 			add("/user/register");

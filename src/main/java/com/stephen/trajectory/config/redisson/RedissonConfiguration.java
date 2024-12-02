@@ -43,7 +43,7 @@ public class RedissonConfiguration {
 		config.useSingleServer()
 				.setAddress(redisAddress)
 				.setDatabase(redissonProperties.getDatabase())
-		        .setPassword(redissonProperties.getPassword());
+				.setPassword(redissonProperties.getPassword());
 		// 2. 创建一个 RedissonClient 实例
 		// 同步和异步 API
 		return Redisson.create(config);
