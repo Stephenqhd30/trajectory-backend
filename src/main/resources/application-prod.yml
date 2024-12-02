@@ -32,6 +32,29 @@ spring:
     uris: ${prod.elasticsearch.uris}
     username: ${prod.elasticsearch.username}
     password: ${prod.elasticsearch.password}
+  # RabbitMQ配置
+  rabbitmq:
+    # todo 是否开启RabbitMQ（预先关闭）
+    enable: true
+    host: ${prod.rabbitmq.host}
+    port: ${prod.rabbitmq.port}
+    username: ${prod.rabbitmq.username}
+    password: ${prod.rabbitmq.password}
+    max-await-timeout: 3000
+    # 虚拟主机
+    virtual-host: /
+    # 消息确认（ACK）
+    publisher-confirm-type: correlated #确认消息已发送到交换机(Exchange)
+    publisher-returns: true #确认消息已发送到队列(Queue)
+    template:
+      mandatory: true
+    # 是否手动ACK
+    listener:
+      type: simple
+      direct:
+        acknowledge-mode: manual
+      simple:
+        acknowledge-mode: manual
   # 文件上传
   servlet:
     multipart:
@@ -42,13 +65,13 @@ spring:
 
 
 server:
-  port: 8080
+  port: ${prod.server.port}
   servlet:
     context-path: /api
     session:
       cookie:
         max-age: 2592000
-        domain: 121.36.17.18
+        domain: ${prod.server.servlet.session.cookie.domain}
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false

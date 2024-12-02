@@ -44,7 +44,7 @@ spring:
   # RabbitMQ配置
   rabbitmq:
     # todo 是否开启RabbitMQ（预先关闭）
-    enable: false
+    enable: true
     host: ${dev.rabbitmq.host}
     port: ${dev.rabbitmq.port}
     username: ${dev.rabbitmq.username}
@@ -52,7 +52,6 @@ spring:
     max-await-timeout: 3000
     # 虚拟主机
     virtual-host: /
-
     # 消息确认（ACK）
     publisher-confirm-type: correlated #确认消息已发送到交换机(Exchange)
     publisher-returns: true #确认消息已发送到队列(Queue)
@@ -89,16 +88,6 @@ mybatis-plus:
       logic-delete-field: isDelete # 全局逻辑删除的实体字段名
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
-
-# 腾讯云COS对象存储配置
-# todo 是否开启
-cos:
-  client:
-    enable: true
-    accessKey: ${dev.cos.client.accessKey}
-    secretKey: ${dev.cos.client.secretKey}
-    region: ${dev.cos.client.region}
-    bucket: ${dev.cos.client.bucket}
 
 # 接口文档配置
 knife4j:
@@ -152,18 +141,15 @@ oss:
   # MinIO OSS配置
   minio:
     # todo 是否开启
-    enable: false
+    enable: true
     # 域名（格式：【ip:port】）
-    endpoint: 127.0.0.1:9000
-    # 是否开启TLS
-    enable-tls: false
-    # 用户的 SecretId
-    secret-id: xxxxxxxx
+    endpoint: ${dev.oss.minio.endpoint}
+    # 用户的 AccessKey
+    accessKey: ${dev.oss.minio.accessKey}
     # 用户的 SecretKey
-    secret-key: xxxxxxxx
+    secretKey: ${dev.oss.minio.secretKey}
     # 桶名称
-    bucket-name: xxxxxxxx
-
+    bucket: ${dev.oss.minio.bucket}
 
 # 讯飞星火api
 xunfei:

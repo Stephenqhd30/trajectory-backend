@@ -7,6 +7,7 @@ import com.stephen.trajectory.model.entity.Post;
 import com.stephen.trajectory.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  * @author stephen qiu
  */
 // todo 取消注释开启任务
-// @Component
+@Component
 @Slf4j
 public class FullSyncPostToEs implements CommandLineRunner {
 	

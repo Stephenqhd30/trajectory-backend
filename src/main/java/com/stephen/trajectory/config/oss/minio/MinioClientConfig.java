@@ -8,6 +8,8 @@ import io.minio.MinioClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -20,6 +22,7 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Conditional(MinioCondition.class)
+@Component
 public class MinioClientConfig {
 	
 	@Resource
@@ -30,13 +33,12 @@ public class MinioClientConfig {
 	 *
 	 * @return 返回MinioClient客户端
 	 */
-	@Bean("minioClientBean")
-	public MinioClient getMinioClient() {
+	@Bean()
+	public MinioClient minioClient() {
 		try {
-			String[] ipAndPort = minioProperties.getEndpoint().split(":");
 			return MinioClient.builder()
-					.endpoint(ipAndPort[0], Integer.parseInt(ipAndPort[1]), minioProperties.getEnableTls())
-					.credentials(minioProperties.getSecretId(), minioProperties.getSecretKey())
+					.endpoint(minioProperties.getEndpoint())
+					.credentials(minioProperties.getAccessKey(), minioProperties.getSecretKey())
 					.build();
 		} catch (Exception e) {
 			log.error("MinIO服务器构建异常：{}", e.getMessage());

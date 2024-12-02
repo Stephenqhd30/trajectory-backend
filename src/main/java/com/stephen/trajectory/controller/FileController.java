@@ -5,7 +5,7 @@ import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ResultUtils;
 import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.common.exception.BusinessException;
-import com.stephen.trajectory.manager.oss.CosManager;
+import com.stephen.trajectory.manager.oss.MinioManager;
 import com.stephen.trajectory.model.dto.file.UploadFileRequest;
 import com.stephen.trajectory.model.entity.User;
 import com.stephen.trajectory.model.enums.file.FileUploadBizEnum;
@@ -36,10 +36,10 @@ public class FileController {
 	private UserService userService;
 	
 	@Resource
-	private CosManager cosManager;
+	private MinioManager minioManager;
 	
 	/**
-	 * 文件上传(使用COS对象存储)
+	 * 文件上传(使用Minio对象存储)
 	 *
 	 * @param multipartFile     multipartFile
 	 * @param uploadFileRequest uploadFileRequest
@@ -58,15 +58,15 @@ public class FileController {
 		User loginUser = userService.getLoginUser(request);
 		
 		// 文件目录：根据业务、用户来划分
-		String path = String.format("/%s/%s/%s", "trajectory", fileUploadBizEnum.getValue(), loginUser.getId());
+		String path = String.format("/%s/%s", fileUploadBizEnum.getValue(), loginUser.getId());
 		
 		try {
 			// 直接上传文件
-			String s = cosManager.uploadToCos(multipartFile, path);
+			String s = minioManager.uploadToMinio(multipartFile, path);
 			// 返回可访问地址
 			return ResultUtils.success(s);
 		} catch (IOException e) {
-			log.error("文件上床失败, 文件路径为: {}", path, e);
+			log.error("文件上传失败, 文件路径为: {}", path, e);
 			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");
 		}
 	}

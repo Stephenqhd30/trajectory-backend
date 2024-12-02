@@ -1,5 +1,6 @@
 package com.stephen.trajectory.manager.oss;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.common.exception.BusinessException;
@@ -66,18 +67,16 @@ public class MinioManager {
 		// 生成唯一键
 		String uniqueKey = SHA3Utils.encrypt(Arrays.toString(file.getBytes()) + originalName + suffix);
 		String fileName = UUID.randomUUID().toString().replace("-", "") + "." + suffix;
-		String filePath = (StringUtils.isBlank(path) ? "" : path + "/") + fileName;
-		
+		String filePath = String.format("%s/%s", path, fileName);
 		
 		try (InputStream inputStream = file.getInputStream()) {
 			// 读取文件内容
 			byte[] dataBytes = inputStream.readAllBytes();
-			String key = StringUtils.isBlank(filePath) ? fileName : filePath + "/" + fileName;
-			
+			String key = StringUtils.isBlank(filePath) ? fileName : filePath;
 			
 			// 上传文件到 MinIO
 			minioClient.putObject(PutObjectArgs.builder()
-					.bucket(minioProperties.getBucketName())
+					.bucket(minioProperties.getBucket())
 					.object(key)
 					.stream(new ByteArrayInputStream(dataBytes), dataBytes.length, -1)
 					.build());
@@ -124,12 +123,12 @@ public class MinioManager {
 	 */
 	private void deleteInMinioByUrl(String url) {
 		ThrowUtils.throwIf(StringUtils.isEmpty(url), ErrorCode.NOT_FOUND_ERROR, "被删除地址为空");
-		String[] split = url.split(minioProperties.getEndpoint() + "/" + minioProperties.getBucketName() + "/");
+		String[] split = url.split(minioProperties.getEndpoint() + "/" + minioProperties.getBucket() + "/");
 		ThrowUtils.throwIf(split.length != 2, ErrorCode.NOT_FOUND_ERROR, "文件不存在");
 		String key = split[1];
 		try {
 			minioClient.removeObject(RemoveObjectArgs.builder()
-					.bucket(minioProperties.getBucketName())
+					.bucket(minioProperties.getBucket())
 					.object(key).build());
 		} catch (Exception e) {
 			throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);

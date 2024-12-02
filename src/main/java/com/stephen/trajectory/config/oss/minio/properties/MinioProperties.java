@@ -26,14 +26,9 @@ public class MinioProperties {
 	private String endpoint;
 	
 	/**
-	 * 是否开启TLS
-	 */
-	private Boolean enableTls = false;
-	
-	/**
 	 * 用户的 SecretId
 	 */
-	private String secretId;
+	private String accessKey;
 	
 	/**
 	 * 用户的 SecretKey
@@ -43,5 +38,5 @@ public class MinioProperties {
 	/**
 	 * 桶名称
 	 */
-	private String bucketName;
+	private String bucket;
 }
