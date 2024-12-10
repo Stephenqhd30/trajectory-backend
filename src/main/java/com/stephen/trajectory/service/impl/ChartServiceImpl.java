@@ -13,6 +13,7 @@ import com.stephen.trajectory.model.dto.chart.ChartQueryRequest;
 import com.stephen.trajectory.model.entity.Chart;
 import com.stephen.trajectory.model.entity.User;
 import com.stephen.trajectory.model.enums.chart.ChartStatusEnum;
+import com.stephen.trajectory.model.enums.chart.ChartTypeEnum;
 import com.stephen.trajectory.model.vo.ChartVO;
 import com.stephen.trajectory.model.vo.UserVO;
 import com.stephen.trajectory.service.ChartService;
@@ -72,7 +73,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart> implements
 			throw new BusinessException(ErrorCode.PARAMS_ERROR, "图表名称过长");
 		}
 		if (StringUtils.isNotBlank(chartType)) {
-			ThrowUtils.throwIf(ChartStatusEnum.getEnumByValue(chartType) == null, ErrorCode.PARAMS_ERROR, "图表类型错误");
+			ThrowUtils.throwIf(ChartTypeEnum.getEnumByValue(chartType) == null, ErrorCode.PARAMS_ERROR, "图表类型错误");
 		}
 		if (StringUtils.isNotBlank(chartData) && chartData.length() > 8192) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR, "内容过长");

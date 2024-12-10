@@ -27,6 +27,5 @@ public class RedisLimiterManager {
 	public void doRateLimit(String key) {
 		// 调用 RedissonClient 的限流方法
 		RateLimitUtils.doRateLimit(key, new TimeModel(1L, TimeUnit.SECONDS), 2L, 1L);
-		
 	}
 }

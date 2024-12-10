@@ -10,6 +10,11 @@ import lombok.Data;
 public class BIResponse {
 	
 	/**
+	 * 图表ID
+	 */
+	private Long chartId;
+	
+	/**
 	 * 生成的图表数据
 	 */
 	private String genChart;

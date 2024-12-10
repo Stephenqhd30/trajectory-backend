@@ -2,8 +2,6 @@ package com.stephen.trajectory.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stephen.trajectory.common.*;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.constants.UserConstant;
@@ -12,12 +10,14 @@ import com.stephen.trajectory.manager.redis.RedisLimiterManager;
 import com.stephen.trajectory.model.dto.chart.*;
 import com.stephen.trajectory.model.entity.Chart;
 import com.stephen.trajectory.model.entity.User;
+import com.stephen.trajectory.model.enums.chart.ChartStatusEnum;
 import com.stephen.trajectory.model.enums.file.FileUploadBizEnum;
 import com.stephen.trajectory.model.vo.ChartVO;
 import com.stephen.trajectory.service.ChartService;
 import com.stephen.trajectory.service.UserService;
 import com.stephen.trajectory.utils.document.excel.ExcelUtils;
 import com.stephen.trajectory.utils.document.file.FileUtils;
+import com.stephen.trajectory.utils.json.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -26,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 图表信息接口
@@ -48,6 +50,10 @@ public class ChartController {
 	
 	@Resource
 	private RedisLimiterManager redisLimiterManager;
+	
+	@Resource
+	private ThreadPoolExecutor threadPoolExecutor;
+
 
 // region 增删改查
 	
@@ -221,8 +227,7 @@ public class ChartController {
 		long current = chartQueryRequest.getCurrent();
 		long size = chartQueryRequest.getPageSize();
 		// 查询数据库
-		Page<Chart> chartPage = chartService.page(new
-						Page<>(current, size),
+		Page<Chart> chartPage = chartService.page(new Page<>(current, size),
 				chartService.getQueryWrapper(chartQueryRequest));
 		// 获取封装类
 		return ResultUtils.success(chartService.getChartVOPage(chartPage, request));
@@ -265,8 +270,9 @@ public class ChartController {
 	
 	// endregion
 	
+	
 	/**
-	 * 通过生成图表
+	 * 通过生成图表(同步调用)
 	 *
 	 * @param multipartFile       上传的Excel文件
 	 * @param genChartByAiRequest 生成图表请求对象
@@ -313,48 +319,191 @@ public class ChartController {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件数据转换失败");
 		}
 		userInput.append(excelToCsv).append("\n");
+		
+		// todo 填充默认数据
+		chart.setChartData(excelToCsv);
+		chart.setStatus(ChartStatusEnum.WAIT.getValue());
+		chart.setExecutorMessage(ChartStatusEnum.WAIT.getText());
+		chart.setUserId(loginUser.getId());
+		// 保存生成的图表数据
+		boolean saveResult = chartService.save(chart);
+		if (!saveResult) {
+			executorError(chart.getId(), "数据更新失败");
+			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据更新失败");
+		}
+		// 返回生成的图表响应
+		BIResponse biResponse = new BIResponse();
+		biResponse.setChartId(chart.getId());
 		// 调用 AI 服务生成配置
 		String result = aiManager.doChat(userInput.toString());
 		if (StringUtils.isBlank(result)) {
-			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "AI 响应为空");
+			executorError(chart.getId(), "AI 响应为空");
+			throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 响应为空");
 		}
-		log.info("AI 响应: {}", result);
 		// 处理 AI 返回内容
 		result = result.replaceAll("```json", "").replaceAll("```", "").trim();
 		String[] split = result.split("'【【【【【'");
 		if (split.length > 3) {
-			log.error("AI 响应解析失败: {}", result);
-			throw new BusinessException(ErrorCode.PARAMS_ERROR, "AI 生成格式错误");
+			executorError(chart.getId(), "AI 生成格式错误");
+			throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 生成格式错误");
 		}
 		
 		String genChart = split[1].trim();
 		String genResult = split[2].trim();
-		
 		// 校验生成的 JSON 格式
-		try {
-			// 尝试解析 JSON 配置部分
-			ObjectMapper objectMapper = new ObjectMapper();
-			// 验证 JSON 格式
-			objectMapper.readTree(genChart);
-		} catch (JsonProcessingException e) {
-			log.error("生成的图表配置 JSON 格式无效: {}", genChart, e);
-			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "AI 生成的图表配置格式无效");
+		if (!JSONUtils.isValidJsonObject(genChart)) {
+			executorError(chart.getId(), "AI 生成的图表配置格式错误");
+			throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 生成的图表配置格式错误");
 		}
-		// todo 填充默认数据
-		chart.setChartData(excelToCsv);
-		chart.setUserId(loginUser.getId());
-		chart.setGenChart(genChart);
-		chart.setGenResult(genResult);
-		
-		// 保存生成的图表数据
-		boolean saveResult = chartService.save(chart);
-		ThrowUtils.throwIf(!saveResult, ErrorCode.SYSTEM_ERROR, "数据保存失败");
-		
+		Chart updateChartResult = new Chart();
+		updateChartResult.setId(chart.getId());
+		updateChartResult.setGenChart(genChart);
+		updateChartResult.setGenResult(genResult);
+		updateChartResult.setStatus(ChartStatusEnum.SUCCEED.getValue());
+		updateChartResult.setExecutorMessage(ChartStatusEnum.SUCCEED.getText());
+		// 更新图表数据
+		boolean updateResult = chartService.updateById(updateChartResult);
+		if (!updateResult) {
+			executorError(chart.getId(), "数据更新失败");
+			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据更新失败");
+		}
 		// 返回生成的图表响应
-		BIResponse biResponse = new BIResponse();
 		biResponse.setGenChart(genChart);
 		biResponse.setGenResult(genResult);
 		return ResultUtils.success(biResponse);
+	}
+	
+	/**
+	 * 通过生成图表(异步调用)
+	 *
+	 * @param multipartFile       上传的Excel文件
+	 * @param genChartByAiRequest 生成图表请求对象
+	 * @param request             HTTP请求对象
+	 * @return {@link BaseResponse <{@link BIResponse}>}
+	 */
+	@PostMapping("/gen/async")
+	public BaseResponse<BIResponse> genChartByAiAsync(@RequestPart("file") MultipartFile multipartFile,
+	                                                  GenChartByAiRequest genChartByAiRequest, HttpServletRequest request) {
+		
+		// 验证用户和请求参数
+		Chart chart = new Chart();
+		BeanUtils.copyProperties(genChartByAiRequest, chart);
+		// 对数据进行校验
+		String biz = genChartByAiRequest.getBiz();
+		FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
+		FileUtils.validFile(multipartFile, fileUploadBizEnum);
+		chartService.validChart(chart, true);
+		
+		// 需要用户登录才能调用接口
+		User loginUser = userService.getLoginUser(request);
+		// 限流
+		redisLimiterManager.doRateLimit("chart:gen:" + loginUser.getId());
+		// 构造用户输入
+		StringBuilder userInput = new StringBuilder();
+		userInput.append("分析需求: ").append("\n");
+		
+		// 拼接分析目标
+		String userGoal = chart.getGoal();
+		if (StringUtils.isNotBlank(userGoal)) {
+			userInput.append(userGoal)
+					.append(",请使用")
+					.append(chart.getChartType())
+					.append("进行分析。\n");
+		} else {
+			userInput.append("无明确目标，生成通用分析图表。\n");
+		}
+		// 压缩之后的数据
+		userInput.append("原始数据:\n");
+		String excelToCsv = ExcelUtils.excelToCsv(multipartFile);
+		if (StringUtils.isBlank(excelToCsv)) {
+			log.error("文件转换为 CSV 数据失败");
+			throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件数据转换失败");
+		}
+		userInput.append(excelToCsv).append("\n");
+		
+		// todo 填充默认数据
+		chart.setChartData(excelToCsv);
+		chart.setStatus(ChartStatusEnum.WAIT.getValue());
+		chart.setExecutorMessage(ChartStatusEnum.WAIT.getText());
+		chart.setUserId(loginUser.getId());
+		// 保存生成的图表数据
+		boolean saveResult = chartService.save(chart);
+		if (!saveResult) {
+			executorError(chart.getId(), "数据更新失败");
+			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据更新失败");
+		}
+		// 返回生成的图表响应
+		BIResponse biResponse = new BIResponse();
+		biResponse.setChartId(chart.getId());
+		// 使用异步化方法和自定义线程池调用 AI 服务
+		try {
+			CompletableFuture.runAsync(() -> {
+				// 先将图表的执行状态为执行中
+				Chart updateChart = new Chart();
+				updateChart.setId(chart.getId());
+				updateChart.setStatus(ChartStatusEnum.RUNNING.getValue());
+				chart.setExecutorMessage(ChartStatusEnum.RUNNING.getText());
+				boolean b = chartService.updateById(updateChart);
+				if (!b) {
+					executorError(chart.getId(), "数据更新失败");
+					throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据更新失败");
+				}
+				// 调用 AI 服务生成配置
+				String result = aiManager.doChat(userInput.toString());
+				if (StringUtils.isBlank(result)) {
+					throw new BusinessException(ErrorCode.SYSTEM_ERROR, "AI 响应为空");
+				}
+				// 处理 AI 返回内容
+				result = result.replaceAll("```json", "").replaceAll("```", "").trim();
+				String[] split = result.split("'【【【【【'");
+				if (split.length > 3) {
+					executorError(chart.getId(), "AI 响应格式错误");
+					throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 响应格式错误");
+				}
+				
+				String genChart = split[1].trim();
+				String genResult = split[2].trim();
+				// 校验生成的 JSON 格式
+				if (!JSONUtils.isValidJsonObject(genChart)) {
+					executorError(chart.getId(), "AI 生成的图表配置格式错误");
+					throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 生成的图表配置格式错误");
+				}
+				Chart updateChartResult = new Chart();
+				updateChartResult.setId(chart.getId());
+				updateChartResult.setGenChart(genChart);
+				updateChartResult.setGenResult(genResult);
+				updateChartResult.setStatus(ChartStatusEnum.SUCCEED.getValue());
+				updateChartResult.setExecutorMessage(ChartStatusEnum.SUCCEED.getText());
+				// 更新图表数据
+				boolean updateResult = chartService.updateById(updateChartResult);
+				if (!updateResult) {
+					executorError(chart.getId(), "数据更新失败");
+					throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据更新失败");
+				}
+				// 更新返回结果
+				biResponse.setGenChart(genChart);
+				biResponse.setGenResult(genResult);
+			}, threadPoolExecutor);
+		} catch (Exception e) {
+			executorError(chart.getId(), "AI 服务调用失败" + e.getMessage());
+		}
+		return ResultUtils.success(biResponse);
+	}
+	
+	/**
+	 * AI 服务调用失败处理
+	 *
+	 * @param chartId         chartId
+	 * @param executorMessage executorMessage
+	 */
+	private void executorError(Long chartId, String executorMessage) {
+		log.error("AI 服务调用失败: {}", executorMessage);
+		Chart chart = new Chart();
+		chart.setId(chartId);
+		chart.setStatus(ChartStatusEnum.FAILED.getValue());
+		chart.setExecutorMessage(executorMessage);
+		boolean b = chartService.updateById(chart);
+		ThrowUtils.throwIf(!b, ErrorCode.SYSTEM_ERROR, "数据更新失败");
 	}
 	
 }
