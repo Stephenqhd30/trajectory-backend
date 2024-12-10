@@ -7,19 +7,20 @@ import org.apache.commons.lang3.ObjectUtils;
 import java.util.Objects;
 
 /**
- * 图表类型枚举类
+ * 图表状态枚举类
+ * 图表状态(wait,running,succeed,failed)
  *
  * @author stephen qiu
  */
 @Getter
 @AllArgsConstructor
-public enum ChartTypeEnum {
-	Line("折线图", "折线图"),
-	Bar("'柱状图'", "柱状图"),
-	Pie("饼图", "饼图"),
-	Scatter("散点图", "散点图"),
-	Bubble("气泡图", "气泡图"),
-	Area("面积图", "面积图");
+public enum ChartStatusEnum {
+	
+	WAIT("等待中", "wait"),
+	RUNNING("执行中", "running"),
+	SUCCEED("执行成功", "succeed"),
+	FAILED("执行失败", "failed");
+	
 	private final String text;
 	
 	private final String value;
@@ -28,13 +29,13 @@ public enum ChartTypeEnum {
 	 * 根据 value 获取枚举
 	 *
 	 * @param value value
-	 * @return {@link ChartTypeEnum}
+	 * @return {@link ChartStatusEnum}
 	 */
-	public static ChartTypeEnum getEnumByValue(String value) {
+	public static ChartStatusEnum getEnumByValue(String value) {
 		if (ObjectUtils.isEmpty(value)) {
 			return null;
 		}
-		for (ChartTypeEnum reviewStatusEnum : ChartTypeEnum.values()) {
+		for (ChartStatusEnum reviewStatusEnum : ChartStatusEnum.values()) {
 			if (Objects.equals(reviewStatusEnum.value, value)) {
 				return reviewStatusEnum;
 			}

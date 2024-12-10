@@ -51,6 +51,16 @@ public class ChartVO implements Serializable {
 	private String genResult;
 	
 	/**
+	 * 图表状态(wait,running,succeed,failed)
+	 */
+	private String status;
+	
+	/**
+	 * 执行信息
+	 */
+	private String executorMessage;
+	
+	/**
 	 * 创建用户id
 	 */
 	private Long userId;

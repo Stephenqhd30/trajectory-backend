@@ -13,6 +13,7 @@ import com.stephen.trajectory.model.dto.tag.TagDTO;
 import com.stephen.trajectory.model.dto.tag.TagQueryRequest;
 import com.stephen.trajectory.model.entity.Tag;
 import com.stephen.trajectory.model.entity.User;
+import com.stephen.trajectory.model.enums.TagIsParentEnum;
 import com.stephen.trajectory.model.vo.TagVO;
 import com.stephen.trajectory.model.vo.UserVO;
 import com.stephen.trajectory.service.TagService;
@@ -52,15 +53,24 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 		ThrowUtils.throwIf(tag == null, ErrorCode.PARAMS_ERROR);
 		// todo 从对象中取值
 		String tagName = tag.getTagName();
+		Long parentId = tag.getParentId();
+		Integer isParent = tag.getIsParent();
 		// 创建数据时，参数不能为空
 		if (add) {
 			// todo 补充校验规则
-			ThrowUtils.throwIf(StringUtils.isBlank(tagName), ErrorCode.PARAMS_ERROR);
+			ThrowUtils.throwIf(StringUtils.isBlank(tagName), ErrorCode.PARAMS_ERROR, "标签名称不能为空");
 		}
 		// 修改数据时，有参数则校验
 		// todo 补充校验规则
 		if (StringUtils.isNotBlank(tagName)) {
 			ThrowUtils.throwIf(tagName.length() > 20, ErrorCode.PARAMS_ERROR, "标题过长");
+		}
+		if (ObjectUtils.isNotEmpty(isParent) && TagIsParentEnum.getEnumByValue(isParent) == TagIsParentEnum.NO) {
+			ThrowUtils.throwIf(ObjectUtils.isEmpty(parentId), ErrorCode.PARAMS_ERROR, "父标签不能为空");
+			if (ObjectUtils.isNotEmpty(parentId)) {
+				Tag byId = this.getById(parentId);
+				ThrowUtils.throwIf(byId == null, ErrorCode.PARAMS_ERROR, "父标签不存在");
+			}
 		}
 	}
 	

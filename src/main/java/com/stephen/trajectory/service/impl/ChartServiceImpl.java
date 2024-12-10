@@ -12,6 +12,7 @@ import com.stephen.trajectory.mapper.ChartMapper;
 import com.stephen.trajectory.model.dto.chart.ChartQueryRequest;
 import com.stephen.trajectory.model.entity.Chart;
 import com.stephen.trajectory.model.entity.User;
+import com.stephen.trajectory.model.enums.chart.ChartStatusEnum;
 import com.stephen.trajectory.model.vo.ChartVO;
 import com.stephen.trajectory.model.vo.UserVO;
 import com.stephen.trajectory.service.ChartService;
@@ -64,11 +65,14 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart> implements
 		}
 		// 修改数据时，有参数则校验
 		// todo 补充校验规则
-		if (StringUtils.isNotBlank(name) && name.length() > 80) {
+		if (StringUtils.isNotBlank(goal) && goal.length() > 80) {
+			throw new BusinessException(ErrorCode.PARAMS_ERROR, "分析目标内容过程");
+		}
+		if (StringUtils.isNotBlank(name) && name.length() > 20) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR, "图表名称过长");
 		}
-		if (StringUtils.isNotBlank(chartType) && chartType.length() > 80) {
-			throw new BusinessException(ErrorCode.PARAMS_ERROR, "图表类型过长");
+		if (StringUtils.isNotBlank(chartType)) {
+			ThrowUtils.throwIf(ChartStatusEnum.getEnumByValue(chartType) == null, ErrorCode.PARAMS_ERROR, "图表类型错误");
 		}
 		if (StringUtils.isNotBlank(chartData) && chartData.length() > 8192) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR, "内容过长");
@@ -93,16 +97,25 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart> implements
 		String goal = chartQueryRequest.getGoal();
 		String name = chartQueryRequest.getName();
 		String chartType = chartQueryRequest.getChartType();
+		String status = chartQueryRequest.getStatus();
+		String executorMessage = chartQueryRequest.getExecutorMessage();
+		String searchText = chartQueryRequest.getSearchText();
 		Long userId = chartQueryRequest.getUserId();
 		String sortField = chartQueryRequest.getSortField();
 		String sortOrder = chartQueryRequest.getSortOrder();
 		
 		// todo 补充需要的查询条件
+		// 拼接查询条件
+		if (StringUtils.isNotBlank(searchText)) {
+			queryWrapper.and(qw -> qw.like("goal", searchText).or().like("name", searchText));
+		}
 		// 模糊查询
 		queryWrapper.like(StringUtils.isNotBlank(goal), "goal", goal);
 		queryWrapper.like(StringUtils.isNotBlank(name), "name", name);
+		queryWrapper.like(StringUtils.isNotBlank(executorMessage), "executorMessage", executorMessage);
 		// 精确查询
 		queryWrapper.eq(StringUtils.isNotBlank(chartType), "chartType", chartType);
+		queryWrapper.eq(StringUtils.isNotBlank(status), "status", status);
 		queryWrapper.eq(ObjectUtils.isNotEmpty(id), "id", id);
 		queryWrapper.eq(ObjectUtils.isNotEmpty(notId), "id", notId);
 		queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
@@ -142,8 +155,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart> implements
 	 *
 	 * @param chartPage chartPage
 	 * @param request   request
-	 * @return {@link Page
-	 * <ChartVO>}
+	 * @return {@link Page<ChartVO>}
 	 */
 	@Override
 	public Page<ChartVO> getChartVOPage(Page<Chart> chartPage, HttpServletRequest request) {
