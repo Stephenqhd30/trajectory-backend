@@ -18,6 +18,7 @@ import com.stephen.trajectory.service.UserService;
 import com.stephen.trajectory.utils.document.excel.ExcelUtils;
 import com.stephen.trajectory.utils.document.file.FileUtils;
 import com.stephen.trajectory.utils.json.JSONUtils;
+import com.stephen.trajectory.utils.redisson.rateLimit.model.TimeModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +29,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 图表信息接口
@@ -296,7 +298,12 @@ public class ChartController {
 		// 需要用户登录才能调用接口
 		User loginUser = userService.getLoginUser(request);
 		// 限流
-		redisLimiterManager.doRateLimit("chart:gen:" + loginUser.getId());
+		String key = "chart:gen:" + loginUser.getId();
+		if (UserConstant.DEFAULT_ROLE.equals(loginUser.getUserRole())) {
+			redisLimiterManager.doRateLimit(key, new TimeModel(1L, TimeUnit.MINUTES), 2L, 1L);
+		} else {
+			redisLimiterManager.doRateLimit(key, new TimeModel(1L, TimeUnit.SECONDS), 10L, 1L);
+		}
 		// 构造用户输入
 		StringBuilder userInput = new StringBuilder();
 		userInput.append("分析需求: ").append("\n");
@@ -397,7 +404,12 @@ public class ChartController {
 		// 需要用户登录才能调用接口
 		User loginUser = userService.getLoginUser(request);
 		// 限流
-		redisLimiterManager.doRateLimit("chart:gen:" + loginUser.getId());
+		String key = "chart:gen:" + loginUser.getId();
+		if (UserConstant.DEFAULT_ROLE.equals(loginUser.getUserRole())) {
+			redisLimiterManager.doRateLimit(key, new TimeModel(1L, TimeUnit.MINUTES), 2L, 1L);
+		} else {
+			redisLimiterManager.doRateLimit(key, new TimeModel(1L, TimeUnit.SECONDS), 10L, 1L);
+		}
 		// 构造用户输入
 		StringBuilder userInput = new StringBuilder();
 		userInput.append("分析需求: ").append("\n");

@@ -33,7 +33,7 @@ public class RateLimitUtils {
 	 * 初始化，删除 Redis 中的限流键值对
 	 */
 	@PostConstruct
-	private void init() {
+	public void init() {
 		clearRateLimitKeys();
 	}
 	
@@ -41,7 +41,7 @@ public class RateLimitUtils {
 	 * 程序销毁时，清除限流键值对
 	 */
 	@PreDestroy
-	private void cleanup() {
+	public void cleanup() {
 		clearRateLimitKeys();
 	}
 	
