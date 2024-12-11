@@ -18,8 +18,7 @@ public enum ChartTypeEnum {
 	Bar("'柱状图'", "柱状图"),
 	Pie("饼图", "饼图"),
 	Scatter("散点图", "散点图"),
-	Bubble("气泡图", "气泡图"),
-	Area("面积图", "面积图");
+	KLineChart("K线图", "K线图");
 	private final String text;
 	
 	private final String value;
