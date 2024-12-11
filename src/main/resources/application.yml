@@ -104,6 +104,7 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.stephen.trajectory.controller
+          - com.stephen.trajectory.elasticsearch.controller
 
 ############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
 sa-token:

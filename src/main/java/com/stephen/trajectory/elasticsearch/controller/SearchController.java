@@ -1,4 +1,4 @@
-package com.stephen.trajectory.controller;
+package com.stephen.trajectory.elasticsearch.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.stephen.trajectory.common.BaseResponse;
