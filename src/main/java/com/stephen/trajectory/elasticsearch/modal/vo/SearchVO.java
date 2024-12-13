@@ -19,4 +19,9 @@ public class SearchVO<T> implements Serializable {
 	 * 分页数据源对象集合
 	 */
 	private List<T> dataList;
+	
+	/**
+	 * 总数
+	 */
+	private Long total;
 }

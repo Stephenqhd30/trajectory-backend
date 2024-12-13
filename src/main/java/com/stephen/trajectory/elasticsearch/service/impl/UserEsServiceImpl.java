@@ -26,13 +26,13 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
- * UserEsService 实现类，负责从 Elasticsearch 中搜索用户并结合数据库获取动态数据。
+ * UserEsService 实现类，
+ * 负责从 Elasticsearch 中搜索用户并结合数据库获取动态数据。
  *
  * @author stephen qiu
  */
@@ -43,30 +43,16 @@ public class UserEsServiceImpl implements UserEsService {
 	@Resource
 	private ElasticsearchRestTemplate elasticsearchRestTemplate;
 	
-	
 	@Resource
 	private UserMapper userMapper;
 	
-	/**
-	 * 从 Elasticsearch 搜索用户，结合数据库信息返回完整数据。
-	 *
-	 * @param userQueryRequest 查询条件封装对象
-	 * @return Page<User> 返回分页后的用户列表
-	 */
 	@Override
 	public Page<User> searchUserFromEs(UserQueryRequest userQueryRequest) {
 		// 获取查询条件
 		BoolQueryBuilder boolQueryBuilder = this.getBoolQueryBuilder(userQueryRequest);
 		// 分页与排序参数
-		// Elasticsearch 页码从 0 开始
-		long current = userQueryRequest.getCurrent() - 1;
-		long pageSize = userQueryRequest.getPageSize();
-		String sortField = userQueryRequest.getSortField();
-		String sortOrder = userQueryRequest.getSortOrder();
-		// 构建排序条件
-		SortBuilder<?> sortBuilder = this.getSortBuilder(sortField, sortOrder);
-		// 构建分页请求
-		PageRequest pageRequest = PageRequest.of((int) current, (int) pageSize);
+		PageRequest pageRequest = PageRequest.of(userQueryRequest.getCurrent() - 1, userQueryRequest.getPageSize());
+		SortBuilder<?> sortBuilder = this.getSortBuilder(userQueryRequest.getSortField(), userQueryRequest.getSortOrder());
 		
 		// 执行查询
 		NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
@@ -79,24 +65,28 @@ public class UserEsServiceImpl implements UserEsService {
 		Page<User> page = new Page<>();
 		page.setTotal(searchHits.getTotalHits());
 		List<User> resourceList = new ArrayList<>();
-		// 查出结果后，从 db 获取最新动态数据
+		
 		if (searchHits.hasSearchHits()) {
-			List<SearchHit<UserEsDTO>> searchHitList = searchHits.getSearchHits();
-			List<Long> userIdList = searchHitList.stream().map(searchHit -> searchHit.getContent().getId())
+			List<Long> userIdList = searchHits.getSearchHits().stream()
+					.map(searchHit -> searchHit.getContent().getId())
 					.collect(Collectors.toList());
 			List<User> userList = userMapper.selectBatchIds(userIdList);
 			
 			if (userList != null) {
-				Map<Long, User> idUserMap = userList.stream().collect(Collectors.toMap(User::getId, user -> user));
+				Map<Long, User> idUserMap = userList.stream()
+						.collect(Collectors.toMap(User::getId, user -> user));
 				
-				searchHitList.forEach(searchHit -> {
+				searchHits.getSearchHits().forEach(searchHit -> {
 					Long userId = searchHit.getContent().getId();
-					if (idUserMap.containsKey(userId)) {
-						resourceList.add(idUserMap.get(userId));
+					User user = idUserMap.get(userId);
+					if (user != null) {
+						resourceList.add(user);
 					} else {
 						// 异步删除无效的 ES 数据
-						log.info("User with id {} does not exist in DB. Deleting from ES.", userId);
-						elasticsearchRestTemplate.delete(String.valueOf(userId), UserEsDTO.class);
+						CompletableFuture.runAsync(() -> {
+							log.info("User with id {} does not exist in DB. Deleting from ES.", userId);
+							elasticsearchRestTemplate.delete(String.valueOf(userId), UserEsDTO.class);
+						});
 					}
 				});
 			}
@@ -106,12 +96,6 @@ public class UserEsServiceImpl implements UserEsService {
 		return page;
 	}
 	
-	/**
-	 * 构建 Elasticsearch 查询条件
-	 *
-	 * @param userQueryRequest userQueryRequest
-	 * @return BoolQueryBuilder 查询条件
-	 */
 	@Override
 	public BoolQueryBuilder getBoolQueryBuilder(UserQueryRequest userQueryRequest) {
 		// 从请求中获取查询参数
@@ -136,22 +120,17 @@ public class UserEsServiceImpl implements UserEsService {
 		if (id != null) {
 			boolQueryBuilder.filter(QueryBuilders.termQuery("id", id));
 		}
-		// 处理排除 ID 筛选
 		if (notId != null) {
 			boolQueryBuilder.filter(QueryBuilders.boolQuery().mustNot(QueryBuilders.termQuery("id", notId)));
 		}
 		
 		// 3. 处理标签筛选
-		// 必须包含所有标签
 		if (CollUtil.isNotEmpty(tagList)) {
 			tagList.forEach(tag -> boolQueryBuilder.filter(QueryBuilders.termQuery("tags", tag)));
 		}
-		
-		// 包含任意一个标签即可
 		if (CollUtil.isNotEmpty(orTagList)) {
 			BoolQueryBuilder orTagBoolQueryBuilder = QueryBuilders.boolQuery();
 			orTagList.forEach(tag -> orTagBoolQueryBuilder.should(QueryBuilders.termQuery("tags", tag)));
-			// 至少匹配一个标签
 			orTagBoolQueryBuilder.minimumShouldMatch(1);
 			boolQueryBuilder.filter(orTagBoolQueryBuilder);
 		}
@@ -183,22 +162,14 @@ public class UserEsServiceImpl implements UserEsService {
 		
 		// 全文搜索: 按标题、内容检索
 		if (StringUtils.isNotBlank(searchText)) {
-			boolQueryBuilder.should(QueryBuilders.matchQuery("userName", userQueryRequest.getSearchText()));
-			boolQueryBuilder.should(QueryBuilders.matchQuery("userProfile", userQueryRequest.getSearchText()));
-			// 至少匹配一个字段
+			boolQueryBuilder.should(QueryBuilders.matchQuery("userName", searchText));
+			boolQueryBuilder.should(QueryBuilders.matchQuery("userProfile", searchText));
 			boolQueryBuilder.minimumShouldMatch(1);
 		}
 		
 		return boolQueryBuilder;
 	}
 	
-	/**
-	 * 构建排序条件
-	 *
-	 * @param sortField 排序字段
-	 * @param sortOrder 排序顺序
-	 * @return SortBuilder 排序构建器
-	 */
 	@Override
 	public SortBuilder<?> getSortBuilder(String sortField, String sortOrder) {
 		// 默认按相关度排序
@@ -209,5 +180,4 @@ public class UserEsServiceImpl implements UserEsService {
 		}
 		return sortBuilder;
 	}
-	
 }

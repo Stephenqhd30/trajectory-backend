@@ -3,8 +3,6 @@ package com.stephen.trajectory.elasticsearch.manager;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.stephen.trajectory.elasticsearch.datasources.DataSource;
 import com.stephen.trajectory.elasticsearch.datasources.DataSourceRegistry;
-import com.stephen.trajectory.elasticsearch.datasources.PostDataSource;
-import com.stephen.trajectory.elasticsearch.datasources.UserDataSource;
 import com.stephen.trajectory.elasticsearch.modal.dto.SearchRequest;
 import com.stephen.trajectory.elasticsearch.modal.enums.SearchTypeEnum;
 import com.stephen.trajectory.elasticsearch.modal.vo.SearchVO;
@@ -25,12 +23,6 @@ import java.util.Optional;
 @Component
 @Slf4j
 public class SearchFacade {
-	
-	@Resource
-	private PostDataSource postDataSource;
-	
-	@Resource
-	private UserDataSource userDataSource;
 	
 	@Resource
 	private DataSourceRegistry dataSourceRegistry;
@@ -54,6 +46,7 @@ public class SearchFacade {
 		// 返回搜索结果
 		SearchVO<Object> searchVO = new SearchVO<>();
 		searchVO.setDataList(dataList);
+		searchVO.setTotal(page.getTotal());
 		return searchVO;
 	}
 }
