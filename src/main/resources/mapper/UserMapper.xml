@@ -29,4 +29,9 @@
         userRole,userEmail,createTime, editTime,
         updateTime,isDelete
 	</sql>
+	<select id="listUserWithDelete" resultType="com.stephen.trajectory.model.entity.User">
+		select *
+		from user
+		where updateTime >= #{minUpdateTime}
+	</select>
 </mapper>

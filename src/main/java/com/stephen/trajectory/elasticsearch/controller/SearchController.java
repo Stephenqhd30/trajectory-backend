@@ -8,14 +8,20 @@ import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.elasticsearch.manager.SearchFacade;
 import com.stephen.trajectory.elasticsearch.modal.dto.SearchRequest;
 import com.stephen.trajectory.elasticsearch.modal.vo.SearchVO;
+import com.stephen.trajectory.elasticsearch.service.ChartEsService;
 import com.stephen.trajectory.elasticsearch.service.PostEsService;
 import com.stephen.trajectory.elasticsearch.service.UserEsService;
+import com.stephen.trajectory.model.dto.chart.ChartQueryRequest;
 import com.stephen.trajectory.model.dto.post.PostQueryRequest;
 import com.stephen.trajectory.model.dto.user.UserQueryRequest;
+import com.stephen.trajectory.model.entity.Chart;
 import com.stephen.trajectory.model.entity.Post;
 import com.stephen.trajectory.model.entity.User;
+import com.stephen.trajectory.model.enums.chart.ChartStatusEnum;
+import com.stephen.trajectory.model.vo.ChartVO;
 import com.stephen.trajectory.model.vo.PostVO;
 import com.stephen.trajectory.model.vo.UserVO;
+import com.stephen.trajectory.service.ChartService;
 import com.stephen.trajectory.service.PostService;
 import com.stephen.trajectory.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -49,10 +55,29 @@ public class SearchController {
 	private UserEsService userEsService;
 	
 	@Resource
+	private ChartEsService chartEsService;
+	
+	@Resource
 	private PostService postService;
 	
 	@Resource
 	private UserService userService;
+	
+	@Resource
+	private ChartService chartService;
+	
+	
+	/**
+	 * 使用门面模式进行重构
+	 * 聚合搜索查询
+	 *
+	 * @param searchRequest searchRequest
+	 * @return {@link BaseResponse <{@link SearchVO } <{@link Object}>>}
+	 */
+	@PostMapping("/all")
+	public BaseResponse<SearchVO<Object>> doSearchAll(@RequestBody SearchRequest searchRequest, HttpServletRequest request) {
+		return ResultUtils.success(searchFacade.searchAll(searchRequest, request));
+	}
 	
 	/**
 	 * 分页搜索帖子（从 ES 查询，封装类）
@@ -93,14 +118,21 @@ public class SearchController {
 	}
 	
 	/**
-	 * 使用门面模式进行重构
-	 * 聚合搜索查询
+	 * 分页搜索图表（从 ES 查询，封装类）
 	 *
-	 * @param searchRequest searchRequest
-	 * @return {@link BaseResponse <{@link SearchVO } <{@link Object}>>}
+	 * @param chartQueryRequest chartQueryRequest
+	 * @param request           request
+	 * @return <{@link BaseResponse} <{@link Page } < {@link ChartVO }>>
 	 */
-	@PostMapping("/all")
-	public BaseResponse<SearchVO<Object>> doSearchAll(@RequestBody SearchRequest searchRequest, HttpServletRequest request) {
-		return ResultUtils.success(searchFacade.searchAll(searchRequest, request));
+	@PostMapping("/search/chart/page/vo")
+	public BaseResponse<Page<ChartVO>> searchChartVOByPage(@RequestBody ChartQueryRequest chartQueryRequest,
+	                                                       HttpServletRequest request) {
+		long size = chartQueryRequest.getPageSize();
+		// 限制爬虫
+		ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+		// 仅查询生成成功的图表
+		chartQueryRequest.setStatus(ChartStatusEnum.SUCCEED.getValue());
+		Page<Chart> chartPage = chartEsService.searchChartFromEs(chartQueryRequest);
+		return ResultUtils.success(chartService.getChartVOPage(chartPage, request));
 	}
 }

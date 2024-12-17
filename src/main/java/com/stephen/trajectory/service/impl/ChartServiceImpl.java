@@ -8,6 +8,8 @@ import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.constants.CommonConstant;
+import com.stephen.trajectory.constants.UserConstant;
+import com.stephen.trajectory.manager.redis.RedisLimiterManager;
 import com.stephen.trajectory.mapper.ChartMapper;
 import com.stephen.trajectory.model.dto.chart.ChartQueryRequest;
 import com.stephen.trajectory.model.entity.Chart;
@@ -18,6 +20,7 @@ import com.stephen.trajectory.model.vo.ChartVO;
 import com.stephen.trajectory.model.vo.UserVO;
 import com.stephen.trajectory.service.ChartService;
 import com.stephen.trajectory.service.UserService;
+import com.stephen.trajectory.utils.redisson.rateLimit.model.TimeModel;
 import com.stephen.trajectory.utils.sql.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -31,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +48,9 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart> implements
 	
 	@Resource
 	private UserService userService;
+	
+	@Resource
+	private RedisLimiterManager redisLimiterManager;
 	
 	/**
 	 * 校验数据
@@ -197,6 +204,68 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart> implements
 		// endregion
 		chartVOPage.setRecords(chartVOList);
 		return chartVOPage;
+	}
+	
+	/**
+	 * 构造用户输入内容
+	 *
+	 * @param chart      图表对象
+	 * @param excelToCsv 转换为 Csv 的数据
+	 * @return 构造好的用户输入字符串
+	 */
+	@Override
+	public String constructUserInput(Chart chart, String excelToCsv) {
+		StringBuilder userInput = new StringBuilder();
+		userInput.append("分析需求: ").append("\n");
+		
+		// 拼接分析目标
+		String userGoal = chart.getGoal();
+		if (StringUtils.isNotBlank(userGoal)) {
+			userInput.append(userGoal)
+					.append(",请使用")
+					.append(chart.getChartType())
+					.append("进行分析。\n");
+		} else {
+			userInput.append("无明确目标，生成通用分析图表。\n");
+		}
+		
+		// 拼接原始数据
+		userInput.append("原始数据:\n");
+		userInput.append(excelToCsv).append("\n");
+		return userInput.toString();
+	}
+	
+	/**
+	 * 限流
+	 *
+	 * @param loginUser loginUser
+	 */
+	@Override
+	public void doRateLimit(User loginUser) {
+		// 限流
+		String key = "chart:gen:" + loginUser.getId();
+		if (UserConstant.DEFAULT_ROLE.equals(loginUser.getUserRole())) {
+			redisLimiterManager.doRateLimit(key, new TimeModel(1L, TimeUnit.MINUTES), 2L, 1L);
+		} else {
+			redisLimiterManager.doRateLimit(key, new TimeModel(1L, TimeUnit.SECONDS), 10L, 1L);
+		}
+	}
+	
+	/**
+	 * AI 服务调用失败处理
+	 *
+	 * @param chartId         chartId
+	 * @param executorMessage executorMessage
+	 */
+	@Override
+	public void executorError(Long chartId, String executorMessage) {
+		log.error("AI 服务调用失败: {}", executorMessage);
+		Chart chart = new Chart();
+		chart.setId(chartId);
+		chart.setStatus(ChartStatusEnum.FAILED.getValue());
+		chart.setExecutorMessage(executorMessage);
+		boolean b = this.updateById(chart);
+		ThrowUtils.throwIf(!b, ErrorCode.SYSTEM_ERROR, "数据更新失败");
 	}
 	
 }

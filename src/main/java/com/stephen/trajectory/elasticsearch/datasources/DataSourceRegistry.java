@@ -25,6 +25,9 @@ public class DataSourceRegistry {
 	@Resource
 	private UserDataSource userDataSource;
 	
+	@Resource
+	private ChartDataSource chartDataSource;
+	
 	private final Map<String, DataSource<?>> typeDataSourceMap = new ConcurrentHashMap<>();
 	
 	/**
@@ -36,6 +39,7 @@ public class DataSourceRegistry {
 		// 扫描所有数据源实例，并根据 @DataSourceType 注解注册它们
 		registerDataSource(postDataSource);
 		registerDataSource(userDataSource);
+		registerDataSource(chartDataSource);
 		log.info("已注册数据源类型: {}", typeDataSourceMap.keySet());
 	}
 	

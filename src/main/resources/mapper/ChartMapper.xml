@@ -27,4 +27,9 @@
         genResult,createTime,updateTime,
         isDelete
 	</sql>
+	<select id="listChartWithDelete" resultType="com.stephen.trajectory.model.entity.Chart">
+		select *
+		from chart
+		where updateTime >= #{minUpdateTime}
+	</select>
 </mapper>

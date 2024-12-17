@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public enum SearchTypeEnum {
 	
 	POST("帖子", "post"),
+	CHART("图表", "chart"),
 	CONSUMER("用户", "consumer");
 	
 	private final String text;
