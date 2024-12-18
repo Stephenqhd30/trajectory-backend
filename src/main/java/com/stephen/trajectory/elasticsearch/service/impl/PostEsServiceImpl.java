@@ -101,14 +101,18 @@ public class PostEsServiceImpl implements PostEsService {
 		// 删除标识
 		boolQueryBuilder.filter(QueryBuilders.termQuery("isDelete", 0));
 		
-		// 构建具体查询条件
-		if (postQueryRequest.getId() != null) {
-			boolQueryBuilder.filter(QueryBuilders.termQuery("id", postQueryRequest.getId()));
-		}
-		if (postQueryRequest.getSearchText() != null) {
+		// 如果没有提供 searchText，构建一个默认查询条件（可以修改为符合需求的条件）
+		if (StringUtils.isNotBlank(postQueryRequest.getSearchText())) {
 			boolQueryBuilder.should(QueryBuilders.multiMatchQuery(postQueryRequest.getSearchText(), "title", "description", "content"));
 			// 至少匹配一个字段
 			boolQueryBuilder.minimumShouldMatch(1);
+		} else {
+			// 默认搜索全部（例如匹配所有帖子）
+			boolQueryBuilder.must(QueryBuilders.matchAllQuery());
+		}
+		
+		if (postQueryRequest.getId() != null) {
+			boolQueryBuilder.filter(QueryBuilders.termQuery("id", postQueryRequest.getId()));
 		}
 		
 		if (CollUtil.isNotEmpty(postQueryRequest.getTags())) {

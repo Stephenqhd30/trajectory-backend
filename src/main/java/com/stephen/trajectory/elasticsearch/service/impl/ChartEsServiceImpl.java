@@ -156,6 +156,9 @@ public class ChartEsServiceImpl implements ChartEsService {
 			boolQueryBuilder.should(QueryBuilders.matchQuery("goal", searchText));
 			boolQueryBuilder.should(QueryBuilders.matchQuery("name", searchText));
 			boolQueryBuilder.minimumShouldMatch(1);
+		} else {
+			// 如果没有提供 searchText，构建一个默认查询条件（匹配所有记录）
+			boolQueryBuilder.must(QueryBuilders.matchAllQuery());
 		}
 		
 		return boolQueryBuilder;

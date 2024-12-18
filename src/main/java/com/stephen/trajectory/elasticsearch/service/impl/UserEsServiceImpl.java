@@ -165,6 +165,9 @@ public class UserEsServiceImpl implements UserEsService {
 			boolQueryBuilder.should(QueryBuilders.matchQuery("userName", searchText));
 			boolQueryBuilder.should(QueryBuilders.matchQuery("userProfile", searchText));
 			boolQueryBuilder.minimumShouldMatch(1);
+		}else {
+			// 如果没有提供 searchText，构建一个默认查询条件（匹配所有记录）
+			boolQueryBuilder.must(QueryBuilders.matchAllQuery());
 		}
 		
 		return boolQueryBuilder;
