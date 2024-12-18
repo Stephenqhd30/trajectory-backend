@@ -4,6 +4,32 @@
 >
 > 仅分享于 [StephenQiu个人博客](https://stephenqhd30.github.io/)
 
+
+BI 商业智能：数据可视化，报表可视化系统
+主流的 BI 平台：帆软 BI、小马 BI、微软 Power BI
+需求分析
+1. 智能分析：用户输入目标和原始数据（图表类型），可以自动生成图表
+2. 图表管理
+3. 图表生成的异步化（消息队列）
+4. 对接 AI 能力
+
+## 技术选型：
+### 前端：
+1. React
+2. Ant Design Pro + Umi.js
+3. 数据可视化开发库（AntV / ECharts）
+4. umi openapi 代码生成（自动生成前后端请求代码）
+
+### 后端：
+1. SpringBoot （Java后端项目模板）
+2. MySQL
+3. Mybatis-Plus + Mybatis 数据访问框架
+4. 消息队列（RabbitMQ）
+5. AI 能力 （Open AI 接口开发 / 现成的 AI 调用能力）
+6. Excel 的上传和数据的解析（Easy Excel）
+7. Swagger + Knife4j 项目接口文档
+8. HuTool 工具库
+
 ## 项目架构设计
 
 ![无标题-2024-05-11-1445](./docs/无标题-2024-05-11-1445.png)
@@ -11,6 +37,10 @@
 ## 项目流程图
 
 ![image-20241215223010544](./docs/image-20241215223010544.png)
+
+## 数据库表设计
+![image](./docs/image.png)
+
 
 ## 项目后端亮点
 
