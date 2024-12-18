@@ -153,9 +153,9 @@ public class LockUtils {
 	/**
 	 * 尝试获取锁并设置重试机制
 	 *
-	 * @param key 锁的键值
+	 * @param key           锁的键值
 	 * @param maxRetryTimes 最大重试次数
-	 * @param waitTime 等待时间
+	 * @param waitTime      等待时间
 	 * @return 是否成功获取锁
 	 */
 	public static boolean tryLockWithRetry(String key, int maxRetryTimes, long waitTime) {
@@ -178,8 +178,8 @@ public class LockUtils {
 	/**
 	 * 使用看门狗机制保护长时间任务，延长锁的自动释放时间
 	 *
-	 * @param key 锁的键值
-	 * @param timeout 锁的超时
+	 * @param key      锁的键值
+	 * @param timeout  锁的超时
 	 * @param timeUnit 超时单位
 	 * @return 获取到锁则返回 true，否则返回 false
 	 */

@@ -1,6 +1,5 @@
 package com.stephen.trajectory.elasticsearch.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.stephen.trajectory.constants.CommonConstant;
 import com.stephen.trajectory.elasticsearch.modal.entity.ChartEsDTO;
@@ -8,6 +7,7 @@ import com.stephen.trajectory.elasticsearch.service.ChartEsService;
 import com.stephen.trajectory.mapper.ChartMapper;
 import com.stephen.trajectory.model.dto.chart.ChartQueryRequest;
 import com.stephen.trajectory.model.entity.Chart;
+import com.stephen.trajectory.model.enums.chart.ChartStatusEnum;
 import com.stephen.trajectory.model.enums.chart.ChartTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -112,14 +112,14 @@ public class ChartEsServiceImpl implements ChartEsService {
 		String goal = chartQueryRequest.getGoal();
 		String name = chartQueryRequest.getName();
 		String chartType = chartQueryRequest.getChartType();
-		String status = chartQueryRequest.getStatus();
 		String executorMessage = chartQueryRequest.getExecutorMessage();
 		Long userId = chartQueryRequest.getUserId();
 		
 		// 构建查询条件
 		BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-		// 1. 过滤已删除标记
+		// 1. 过滤已删除标记并只查询生成成功的图表
 		boolQueryBuilder.filter(QueryBuilders.termQuery("isDelete", 0));
+		boolQueryBuilder.filter(QueryBuilders.termQuery("status", ChartStatusEnum.SUCCEED.getValue()));
 		
 		// 2. 处理 ID 筛选
 		if (id != null) {
@@ -132,9 +132,6 @@ public class ChartEsServiceImpl implements ChartEsService {
 		// 3. 处理其它字段的精确查询（如用户角色、性别等）
 		if (ObjectUtils.isNotEmpty(chartType) && ChartTypeEnum.getEnumByValue(chartType) != null) {
 			boolQueryBuilder.filter(QueryBuilders.termQuery("chartType", chartType));
-		}
-		if (ObjectUtils.isNotEmpty(status) && ChartTypeEnum.getEnumByValue(status) != null) {
-			boolQueryBuilder.filter(QueryBuilders.termQuery("status", status));
 		}
 		if (ObjectUtils.isNotEmpty(userId)) {
 			boolQueryBuilder.filter(QueryBuilders.termQuery("userId", userId));

@@ -19,14 +19,15 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -165,7 +166,7 @@ public class UserEsServiceImpl implements UserEsService {
 			boolQueryBuilder.should(QueryBuilders.matchQuery("userName", searchText));
 			boolQueryBuilder.should(QueryBuilders.matchQuery("userProfile", searchText));
 			boolQueryBuilder.minimumShouldMatch(1);
-		}else {
+		} else {
 			// 如果没有提供 searchText，构建一个默认查询条件（匹配所有记录）
 			boolQueryBuilder.must(QueryBuilders.matchAllQuery());
 		}

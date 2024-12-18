@@ -7,7 +7,6 @@ import com.stephen.trajectory.model.dto.chart.ChartQueryRequest;
 import com.stephen.trajectory.model.entity.Chart;
 import com.stephen.trajectory.model.entity.User;
 import com.stephen.trajectory.model.vo.ChartVO;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
