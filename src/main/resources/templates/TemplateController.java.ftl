@@ -8,7 +8,7 @@ import ${packageName}.common.ReviewRequest;
 import ${packageName}.common.ErrorCode;
 import ${packageName}.common.ResultUtils;
 import ${packageName}.constants.UserConstant;
-import ${packageName}.exception.BusinessException;
+import ${packageName}.common.exception.BusinessException;
 import ${packageName}.common.ThrowUtils;
 import ${packageName}.model.dto.${dataKey}.${upperDataKey}AddRequest;
 import ${packageName}.model.dto.${dataKey}.${upperDataKey}EditRequest;

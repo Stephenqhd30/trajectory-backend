@@ -29,9 +29,9 @@ public class CodeGenerator {
 	public static void main(String[] args) throws TemplateException, IOException {
 		// 指定生成参数
 		String packageName = "com.stephen.trajectory";
-		String dataName = "图表信息";
-		String dataKey = "chart";
-		String upperDataKey = "Chart";
+		String dataName = "帖子评论";
+		String dataKey = "postComment";
+		String upperDataKey = "PostComment";
 		
 		// 封装生成参数
 		Map<String, Object> dataModel = new HashMap<>();
@@ -69,16 +69,16 @@ public class CodeGenerator {
 		// 3、生成数据模型封装类（包括 DTO 和 VO）
 		// 生成 DTO
 		inputPath = projectPath + File.separator + "src/main/resources/templates/model/TemplateAddRequest.java.ftl";
-		outputPath = String.format("%s/generator/model/dto/%sAddRequest.java", projectPath, upperDataKey);
+		outputPath = String.format("%s/generator/model/postComment/%sAddRequest.java", projectPath, upperDataKey);
 		doGenerate(inputPath, outputPath, dataModel);
 		inputPath = projectPath + File.separator + "src/main/resources/templates/model/TemplateQueryRequest.java.ftl";
-		outputPath = String.format("%s/generator/model/dto/%sQueryRequest.java", projectPath, upperDataKey);
+		outputPath = String.format("%s/generator/model/postComment/%sQueryRequest.java", projectPath, upperDataKey);
 		doGenerate(inputPath, outputPath, dataModel);
 		inputPath = projectPath + File.separator + "src/main/resources/templates/model/TemplateEditRequest.java.ftl";
-		outputPath = String.format("%s/generator/model/dto/%sEditRequest.java", projectPath, upperDataKey);
+		outputPath = String.format("%s/generator/model/postComment/%sEditRequest.java", projectPath, upperDataKey);
 		doGenerate(inputPath, outputPath, dataModel);
 		inputPath = projectPath + File.separator + "src/main/resources/templates/model/TemplateUpdateRequest.java.ftl";
-		outputPath = String.format("%s/generator/model/dto/%sUpdateRequest.java", projectPath, upperDataKey);
+		outputPath = String.format("%s/generator/model/postComment/%sUpdateRequest.java", projectPath, upperDataKey);
 		doGenerate(inputPath, outputPath, dataModel);
 		System.out.println("生成 DTO 成功，文件路径：" + outputPath);
 		// 生成 VO
