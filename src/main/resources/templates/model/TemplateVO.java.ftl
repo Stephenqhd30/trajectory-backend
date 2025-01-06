@@ -71,8 +71,7 @@ public class ${upperDataKey}VO implements Serializable {
         }
         ${upperDataKey} ${dataKey} = new ${upperDataKey}();
         BeanUtils.copyProperties(${dataKey}VO, ${dataKey});
-        List<String> tagList = ${dataKey}VO.getTags();
-        ${dataKey}.setTags(JSONUtil.toJsonStr(tagList));
+        List<String> tagList = ${dataKey}VO.getTagList();
         if (CollUtil.isNotEmpty(tagList)) {
             ${dataKey}.setTags(JSONUtil.toJsonStr(tagList));
         }

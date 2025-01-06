@@ -8,10 +8,9 @@ import ${packageName}.common.ErrorCode;
 import ${packageName}.constants.CommonConstant;
 import ${packageName}.common.ThrowUtils;
 import ${packageName}.mapper.${upperDataKey}Mapper;
+import ${packageName}.common.exception.BusinessException;
 import ${packageName}.model.dto.${dataKey}.${upperDataKey}QueryRequest;
 import ${packageName}.model.entity.${upperDataKey};
-import ${packageName}.model.entity.${upperDataKey}Favour;
-import ${packageName}.model.entity.${upperDataKey}Thumb;
 import ${packageName}.model.entity.User;
 import ${packageName}.model.vo.${upperDataKey}VO;
 import ${packageName}.model.vo.UserVO;
@@ -162,7 +161,7 @@ public class ${upperDataKey}ServiceImpl extends ServiceImpl<${upperDataKey}Mappe
         // todo 可以根据需要为封装对象补充值，不需要的内容可以删除
         // region 可选
         // 1. 关联查询用户信息
-        Set<Long> userIdSet = ${dataKey}List.stream().map(${DataKey} ::getUserId).collect(Collectors.toSet());
+        Set<Long> userIdSet = ${dataKey}List.stream().map(${upperDataKey}::getUserId).collect(Collectors.toSet());
         // 填充信息
         if (CollUtil.isNotEmpty(userIdSet)) {
         CompletableFuture<Map<Long, List<User>>> mapCompletableFuture = CompletableFuture.supplyAsync(() -> userService.listByIds(userIdSet).stream()

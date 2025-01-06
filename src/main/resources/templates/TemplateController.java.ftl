@@ -1,7 +1,7 @@
 package ${packageName}.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import ${packageName}.annotation.AuthCheck;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import ${packageName}.common.BaseResponse;
 import ${packageName}.common.DeleteRequest;
 import ${packageName}.common.ReviewRequest;
@@ -58,11 +58,8 @@ public class ${upperDataKey}Controller {
         ${upperDataKey} ${dataKey} = new ${upperDataKey}();
         BeanUtils.copyProperties(${dataKey}AddRequest, ${dataKey});
         // 数据校验
-        try {
-            ${dataKey}Service.valid${upperDataKey}(${dataKey}, true);
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, e.getMessage());
-        }
+        ${dataKey}Service.valid${upperDataKey}(${dataKey}, true);
+
         // todo 填充默认值
         User loginUser = userService.getLoginUser(request);
         ${dataKey}.setUserId(loginUser.getId());
@@ -117,11 +114,8 @@ public class ${upperDataKey}Controller {
         ${upperDataKey} ${dataKey} = new ${upperDataKey}();
         BeanUtils.copyProperties(${dataKey}UpdateRequest, ${dataKey});
         // 数据校验
-        try {
-            ${dataKey}Service.valid${upperDataKey}(${dataKey}, false);
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, e.getMessage());
-        }
+        ${dataKey}Service.valid${upperDataKey}(${dataKey}, false);
+
         // 判断是否存在
         long id = ${dataKey}UpdateRequest.getId();
         ${upperDataKey} old${upperDataKey} = ${dataKey}Service.getById(id);
