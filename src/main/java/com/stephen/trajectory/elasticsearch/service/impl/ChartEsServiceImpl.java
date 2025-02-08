@@ -48,7 +48,7 @@ public class ChartEsServiceImpl implements ChartEsService {
 	private ChartMapper chartMapper;
 	
 	/**
-	 * 根据查询条件从 Elasticsearch 中搜索用户并结合数据库获取动态数据。
+	 * 根据查询条件从 Elasticsearch 中搜索Chart并结合数据库获取动态数据。
 	 *
 	 * @param chartQueryRequest chartQueryRequest
 	 * @return {@link Page < {@link Chart}>}

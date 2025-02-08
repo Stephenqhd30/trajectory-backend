@@ -47,6 +47,12 @@ public class UserEsServiceImpl implements UserEsService {
 	@Resource
 	private UserMapper userMapper;
 	
+	/**
+	 * 根据用户查询请求构建 Elasticsearch 查询条件
+	 *
+	 * @param userQueryRequest userQueryRequest
+	 * @return Page<User>
+	 */
 	@Override
 	public Page<User> searchUserFromEs(UserQueryRequest userQueryRequest) {
 		// 获取查询条件

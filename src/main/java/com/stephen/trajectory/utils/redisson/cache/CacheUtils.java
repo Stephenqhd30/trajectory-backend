@@ -42,7 +42,7 @@ public class CacheUtils {
 	 * @param <T> 返回值的类型
 	 * @return 缓存值，或 null 如果键不存在
 	 */
-	public <T> T get(String key) {
+	public static <T> T get(String key) {
 		return getWithCodec(key, null);
 	}
 	
@@ -52,7 +52,7 @@ public class CacheUtils {
 	 * @param key 缓存键
 	 * @return 缓存中的字符串值，或 null 如果键不存在
 	 */
-	public String getString(String key) {
+	public static String getString(String key) {
 		return getWithCodec(key, StringCodec.INSTANCE);
 	}
 	
@@ -63,7 +63,7 @@ public class CacheUtils {
 	 * @param value 缓存值
 	 * @param <T>   值的类型
 	 */
-	public <T> void put(String key, T value) {
+	public static <T> void put(String key, T value) {
 		putWithExpiration(key, value, DEFAULT_EXPIRED);
 	}
 	
@@ -75,7 +75,7 @@ public class CacheUtils {
 	 * @param expired 过期时间（秒），若为 0 或负数则使用默认过期时间
 	 * @param <T>     值的类型
 	 */
-	public <T> void put(String key, T value, long expired) {
+	public static <T> void put(String key, T value, long expired) {
 		putWithExpiration(key, value, expired);
 	}
 	
@@ -85,7 +85,7 @@ public class CacheUtils {
 	 * @param key   缓存键
 	 * @param value 缓存值
 	 */
-	public void putString(String key, String value) {
+	public static void putString(String key, String value) {
 		putWithExpiration(key, value, DEFAULT_EXPIRED, StringCodec.INSTANCE);
 	}
 	
@@ -96,7 +96,7 @@ public class CacheUtils {
 	 * @param value   缓存值
 	 * @param expired 过期时间（秒），若为 0 或负数则使用默认过期时间
 	 */
-	public void putString(String key, String value, long expired) {
+	public static void putString(String key, String value, long expired) {
 		putWithExpiration(key, value, expired, StringCodec.INSTANCE);
 	}
 	
@@ -127,7 +127,7 @@ public class CacheUtils {
 	 * @param expired 过期时间（秒），为 0 或负数时使用默认过期时间
 	 * @param <T>     值的类型
 	 */
-	private <T> void putWithExpiration(String key, T value, long expired) {
+	private static <T> void putWithExpiration(String key, T value, long expired) {
 		putWithExpiration(key, value, expired, null);
 	}
 	
@@ -140,7 +140,7 @@ public class CacheUtils {
 	 * @param codec   编解码器（用于指定数据的序列化方式）
 	 * @param <T>     值的类型
 	 */
-	private <T> void putWithExpiration(String key, T value, long expired, StringCodec codec) {
+	private static <T> void putWithExpiration(String key, T value, long expired, StringCodec codec) {
 		RBucket<T> bucket = codec == null
 				? REDISSON_CLIENT.getBucket(prefixedKey(key))
 				: REDISSON_CLIENT.getBucket(prefixedKey(key), codec);
@@ -154,7 +154,7 @@ public class CacheUtils {
 	 * @param codec 编解码器
 	 * @return 缓存值，或 null 如果键不存在
 	 */
-	private <T> T getWithCodec(String key, StringCodec codec) {
+	private static <T> T getWithCodec(String key, StringCodec codec) {
 		RBucket<T> bucket = codec == null
 				? REDISSON_CLIENT.getBucket(prefixedKey(key))
 				: REDISSON_CLIENT.getBucket(prefixedKey(key), codec);
@@ -167,7 +167,7 @@ public class CacheUtils {
 	 * @param key 原始缓存键
 	 * @return 添加前缀后的缓存键
 	 */
-	private String prefixedKey(String key) {
+	private static String prefixedKey(String key) {
 		return REDIS_KEY_PREFIX + key;
 	}
 }

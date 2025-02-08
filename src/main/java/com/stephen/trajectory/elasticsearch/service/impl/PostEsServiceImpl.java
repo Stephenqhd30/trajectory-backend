@@ -43,7 +43,12 @@ public class PostEsServiceImpl implements PostEsService {
 	@Resource
 	private PostMapper postMapper;
 	
-	
+	/**
+	 * 从ES中搜索
+	 *
+	 * @param postQueryRequest postQueryRequest
+	 * @return Page<Post>
+	 */
 	@Override
 	public Page<Post> searchPostFromEs(PostQueryRequest postQueryRequest) {
 		BoolQueryBuilder boolQueryBuilder = getBoolQueryBuilder(postQueryRequest);
