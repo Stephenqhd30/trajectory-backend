@@ -15,38 +15,38 @@ import javax.servlet.http.HttpServletRequest;
  * @author stephen qiu
  */
 public interface PostCommentService extends IService<PostComment> {
-
-    /**
-     * 校验数据
-     *
-     * @param postComment postComment
-     * @param add 对创建的数据进行校验
-     */
-    void validPostComment(PostComment postComment, boolean add);
-
-    /**
-     * 获取查询条件
-     *
-     * @param postCommentQueryRequest postCommentQueryRequest
-     * @return {@link QueryWrapper<PostComment>}
-     */
-    QueryWrapper<PostComment> getQueryWrapper(PostCommentQueryRequest postCommentQueryRequest);
-
-    /**
-     * 获取帖子评论封装
-     *
-     * @param postComment postComment
-     * @param request request
-     * @return {@link PostCommentVO}
-     */
-    PostCommentVO getPostCommentVO(PostComment postComment, HttpServletRequest request);
-
-    /**
-     * 分页获取帖子评论封装
-     *
-     * @param postCommentPage postCommentPage
-     * @param request request
-     * @return {@link Page<PostCommentVO>}
-     */
-    Page<PostCommentVO> getPostCommentVOPage(Page<PostComment> postCommentPage, HttpServletRequest request);
+	
+	/**
+	 * 校验数据
+	 *
+	 * @param postComment postComment
+	 * @param add         对创建的数据进行校验
+	 */
+	void validPostComment(PostComment postComment, boolean add);
+	
+	/**
+	 * 获取查询条件
+	 *
+	 * @param postCommentQueryRequest postCommentQueryRequest
+	 * @return {@link QueryWrapper<PostComment>}
+	 */
+	QueryWrapper<PostComment> getQueryWrapper(PostCommentQueryRequest postCommentQueryRequest);
+	
+	/**
+	 * 获取帖子评论封装
+	 *
+	 * @param postComment postComment
+	 * @param request     request
+	 * @return {@link PostCommentVO}
+	 */
+	PostCommentVO getPostCommentVO(PostComment postComment, HttpServletRequest request);
+	
+	/**
+	 * 分页获取帖子评论封装
+	 *
+	 * @param postCommentPage postCommentPage
+	 * @param request         request
+	 * @return {@link Page<PostCommentVO>}
+	 */
+	Page<PostCommentVO> getPostCommentVOPage(Page<PostComment> postCommentPage, HttpServletRequest request);
 }

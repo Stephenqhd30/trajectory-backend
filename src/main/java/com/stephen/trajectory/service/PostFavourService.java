@@ -18,19 +18,19 @@ public interface PostFavourService extends IService<PostFavour> {
 	/**
 	 * 帖子收藏
 	 *
-	 * @param postId
-	 * @param loginUser
-	 * @return
+	 * @param postId    postId
+	 * @param loginUser loginUser
+	 * @return int
 	 */
 	int doPostFavour(long postId, User loginUser);
 	
 	/**
 	 * 分页获取用户收藏的帖子列表
 	 *
-	 * @param page
-	 * @param queryWrapper
-	 * @param favourUserId
-	 * @return
+	 * @param page         page
+	 * @param queryWrapper queryWrapper
+	 * @param favourUserId favourUserId
+	 * @return Page<Post>
 	 */
 	Page<Post> listFavourPostByPage(IPage<Post> page, Wrapper<Post> queryWrapper,
 	                                long favourUserId);
@@ -38,9 +38,9 @@ public interface PostFavourService extends IService<PostFavour> {
 	/**
 	 * 帖子收藏（内部服务）
 	 *
-	 * @param userId
-	 * @param postId
-	 * @return
+	 * @param userId userId
+	 * @param postId postId
+	 * @return int
 	 */
 	int doPostFavourInner(long userId, long postId);
 }
