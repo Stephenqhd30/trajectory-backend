@@ -2,7 +2,6 @@ package com.stephen.trajectory.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.lang.Pair;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.exception.ExcelAnalysisException;
@@ -17,11 +16,9 @@ import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.config.secure.utils.DeviceUtils;
 import com.stephen.trajectory.constants.CommonConstant;
-import com.stephen.trajectory.constants.RedisConstant;
 import com.stephen.trajectory.constants.SaltConstant;
 import com.stephen.trajectory.constants.UserConstant;
 import com.stephen.trajectory.mapper.UserMapper;
-import com.stephen.trajectory.model.dto.user.UserMatchRequest;
 import com.stephen.trajectory.model.dto.user.UserQueryRequest;
 import com.stephen.trajectory.model.entity.User;
 import com.stephen.trajectory.model.enums.user.UserGenderEnum;
@@ -30,7 +27,6 @@ import com.stephen.trajectory.model.vo.LoginUserVO;
 import com.stephen.trajectory.model.vo.UserVO;
 import com.stephen.trajectory.service.UserService;
 import com.stephen.trajectory.utils.regex.RegexUtils;
-import com.stephen.trajectory.utils.similarity.CosineSimilarityUtil;
 import com.stephen.trajectory.utils.sql.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -45,7 +41,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -422,122 +417,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		log.info("成功导入 {} 条用户数据，{} 条错误数据", listener.getSuccessRecords().size(), listener.getErrorRecords().size());
 		
 		return result;
-	}
-	
-	/**
-	 * 基于余弦相似度匹配用户
-	 *
-	 * @param userMatchRequest userMatchRequest
-	 * @param request          request
-	 * @return {@link List<UserVO>}
-	 */
-	@Override
-	public List<UserVO> cosMatchUsers(UserMatchRequest userMatchRequest, HttpServletRequest request) {
-		User loginUser = this.getLoginUser(request);
-		// 检查 Redis 中是否有缓存的匹配用户数据
-		String cacheKey = RedisConstant.FILE_NAME + RedisConstant.MATCH_USER + ":" + loginUser.getId();
-		if (Boolean.TRUE.equals(redisTemplate.hasKey(cacheKey))) {
-			// 如果缓存存在，直接获取并返回
-			String cachedResult = (String) redisTemplate.opsForValue().get(cacheKey);
-			return JSONUtil.toList(cachedResult, UserVO.class);
-		}
-		// 查询所有有标签的用户
-		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-		queryWrapper.select("id", "tags");
-		queryWrapper.isNotNull("tags");
-		List<User> userList = this.list(queryWrapper);
-		
-		// 获取当前登录用户的标签并解析为列表
-		String tags = loginUser.getTags();
-		List<String> tagList = JSONUtil.toList(tags, String.class);
-		
-		// 用户与相似度的列表
-		List<Pair<User, Double>> similarityList = new ArrayList<>();
-		
-		// 计算所有用户与当前用户的相似度
-		for (User user : userList) {
-			// 跳过无标签或当前用户自己
-			if (StringUtils.isBlank(user.getTags()) || user.getId().equals(loginUser.getId())) {
-				continue;
-			}
-			
-			// 解析用户标签
-			List<String> userTagList = JSONUtil.toList(user.getTags(), String.class);
-			// 计算余弦相似度
-			double similarity = CosineSimilarityUtil.cosineSimilarity(tagList, userTagList);
-			if (Double.isNaN(similarity)) {
-				similarity = 0;
-			}
-			// 将用户和相似度存入列表
-			similarityList.add(new Pair<>(user, similarity));
-		}
-		
-		// 按照相似度降序排序，并取前 num 个用户
-		List<Pair<User, Double>> topUserPairList = similarityList.stream()
-				.sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
-				.limit(userMatchRequest.getNumber())
-				.collect(Collectors.toList());
-		
-		// 获取匹配用户的ID列表
-		List<Long> userIdList = topUserPairList.stream()
-				.map(pair -> pair.getKey().getId())
-				.collect(Collectors.toList());
-		
-		// 根据 ID 查询用户详情
-		QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
-		userQueryWrapper.in("id", userIdList);
-		List<User> matchedUsers = this.list(userQueryWrapper);
-		
-		// 将用户按照最初排序的顺序返回，并设置相似度
-		Map<Long, Double> userSimilarityMap = topUserPairList.stream()
-				.collect(Collectors.toMap(pair -> pair.getKey().getId(), Pair::getValue));
-		
-		List<UserVO> userVOList = matchedUsers.stream()
-				.map(user -> {
-					UserVO userVO = this.getUserVO(user, request);
-					// 设置相似度
-					userVO.setSimilarity(userSimilarityMap.get(user.getId()));
-					return userVO;
-				})
-				.collect(Collectors.toList());
-		// 保存至Redis中 设置过期时间为一小时
-		redisTemplate.opsForValue().set(cacheKey, JSONUtil.toJsonStr(userVOList), 1, TimeUnit.HOURS);
-		return userVOList;
-	}
-	
-	/**
-	 * 分页获取余弦相似度匹配用户
-	 *
-	 * @param userVOPage userVOPage
-	 * @param loginUser  loginUser
-	 * @return {@link Page<UserVO>}
-	 */
-	@Override
-	public Page<UserVO> cosMatchUserByPage(Page<UserVO> userVOPage, User loginUser) {
-		// 获取当前登录用户的标签并解析为列表
-		String tags = loginUser.getTags();
-		List<String> tagList = JSONUtil.toList(tags, String.class);
-		// 计算所有用户与当前用户的相似度
-		List<UserVO> userVOList = userVOPage.getRecords().stream()
-				// 过滤掉当前用户和没有标签的用户
-				.filter(user -> !ObjectUtils.isEmpty(user.getTags()) && !user.getId().equals(loginUser.getId()))
-				.peek(user -> {
-					// 解析用户标签
-					List<String> userTagList = user.getTags();
-					// 计算余弦相似度
-					double similarity = CosineSimilarityUtil.cosineSimilarity(tagList, userTagList);
-					if (Double.isNaN(similarity)) {
-						similarity = 0;
-					}
-					// 设置相似度
-					user.setSimilarity(similarity);
-				})
-				// 按照相似度降序排序
-				.sorted((a, b) -> Double.compare(b.getSimilarity(), a.getSimilarity()))
-				.collect(Collectors.toList());
-		// 更新分页数据
-		userVOPage.setRecords(userVOList);
-		return userVOPage;
 	}
 	
 }

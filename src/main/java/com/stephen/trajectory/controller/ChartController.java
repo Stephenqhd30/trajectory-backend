@@ -28,6 +28,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 图表信息接口
@@ -300,7 +302,7 @@ public class ChartController {
 		// 将数据转换成csv
 		String excelToCsv = ExcelUtils.excelToCsv(multipartFile);
 		if (StringUtils.isBlank(excelToCsv)) {
-			throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件数据转换失败");
+			throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件数据转换失败，可能是上传的文件格式不正确");
 		}
 		// 构建用户输入
 		String userInput = chartService.constructUserInput(chart, excelToCsv);
@@ -321,20 +323,26 @@ public class ChartController {
 		biResponse.setChartId(chart.getId());
 		// 调用 AI 服务生成配置
 		String result = aiManager.doChat(userInput);
+		String genChart = null;
+		String genResult = null;
+		log.info("AI 响应: {}", result);
 		if (StringUtils.isBlank(result)) {
-			chartService.executorError(chart.getId(), "AI 响应为空");
+			chartService.executorError(chart.getId(), "AI 响应为空，可能是由于网络问题");
 			throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 响应为空");
 		}
 		// 处理 AI 返回内容
 		result = result.replaceAll("```json", "").replaceAll("```", "").trim();
-		String[] split = result.split("'【【【【【'");
-		if (split.length > 3) {
-			chartService.executorError(chart.getId(), "AI 生成格式错误");
-			throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 生成格式错误");
+		// 提取分析结论部分
+		String[] parts = result.split("【【【【【");
+		if (parts.length > 1) {
+			// 提取图表配置部分
+			genChart = parts[0].trim();
+			// 提取结论部分
+			genResult = parts[1].trim();
+		} else {
+			chartService.executorError(chart.getId(), "AI 生成的分析结论格式错误");
+			throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 生成的分析结论格式错误");
 		}
-		
-		String genChart = split[1].trim();
-		String genResult = split[2].trim();
 		// 校验生成的 JSON 格式
 		if (!JSONUtils.isValidJsonObject(genChart)) {
 			chartService.executorError(chart.getId(), "AI 生成的图表配置格式错误");
@@ -418,19 +426,21 @@ public class ChartController {
 				}
 				// 调用 AI 服务生成配置
 				String result = aiManager.doChat(userInput);
-				if (StringUtils.isBlank(result)) {
-					throw new BusinessException(ErrorCode.SYSTEM_ERROR, "AI 响应为空");
-				}
+				String genChart = null;
+				String genResult = null;
 				// 处理 AI 返回内容
 				result = result.replaceAll("```json", "").replaceAll("```", "").trim();
-				String[] split = result.split("'【【【【【'");
-				if (split.length > 3) {
-					chartService.executorError(chart.getId(), "AI 响应格式错误");
-					throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 响应格式错误");
+				// 提取分析结论部分
+				String[] parts = result.split("【【【【【");
+				if (parts.length > 1) {
+					// 提取图表配置部分
+					genChart = parts[0].trim();
+					// 提取结论部分
+					genResult = parts[1].trim();
+				} else {
+					chartService.executorError(chart.getId(), "AI 生成的分析结论格式错误");
+					throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 生成的分析结论格式错误");
 				}
-				
-				String genChart = split[1].trim();
-				String genResult = split[2].trim();
 				// 校验生成的 JSON 格式
 				if (!JSONUtils.isValidJsonObject(genChart)) {
 					chartService.executorError(chart.getId(), "AI 生成的图表配置格式错误");

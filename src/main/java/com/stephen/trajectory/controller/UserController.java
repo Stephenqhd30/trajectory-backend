@@ -321,48 +321,4 @@ public class UserController {
 		return ResultUtils.success(true);
 	}
 	
-	/**
-	 * 获取匹配用户列表
-	 *
-	 * @param userMatchRequest userMatchRequest
-	 * @param request          request
-	 * @return {@link BaseResponse<List<UserVO>>}
-	 */
-	@PostMapping("/list/match/user/vo")
-	public BaseResponse<List<UserVO>> listMatchUserVO(@RequestBody UserMatchRequest userMatchRequest, HttpServletRequest request) {
-		ThrowUtils.throwIf(userMatchRequest == null, ErrorCode.PARAMS_ERROR);
-		int number = userMatchRequest.getNumber();
-		// 检查参数是否合法
-		ThrowUtils.throwIf(number <= 0 || number > 20, ErrorCode.PARAMS_ERROR, "匹配人数不能小于0人或者多于20人");
-		return ResultUtils.success(userService.cosMatchUsers(userMatchRequest, request));
-	}
-	
-	/**
-	 * 通过余弦相似度想法计算出当前用户和当前用户的相似度
-	 *
-	 * @param userQueryRequest userQueryRequest
-	 * @param request          request
-	 * @return {@link BaseResponse<List<UserVO>>}
-	 */
-	@PostMapping("/list/match/user/vo/page")
-	public BaseResponse<Page<UserVO>> listMatchUserVOByPage(@RequestBody UserQueryRequest userQueryRequest, HttpServletRequest request) {
-		ThrowUtils.throwIf(userQueryRequest == null, ErrorCode.PARAMS_ERROR);
-		// 获取当前登录用户的标签列表
-		User loginUser = userService.getLoginUser(request);
-		if (StringUtils.isBlank(loginUser.getTags())) {
-			return ResultUtils.success(new Page<>());
-		}
-		long current = userQueryRequest.getCurrent();
-		long size = userQueryRequest.getPageSize();
-		// 限制爬虫
-		ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-		Page<User> userPage = userService.page(new Page<>(current, size),
-				userService.getQueryWrapper(userQueryRequest));
-		Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotal());
-		List<UserVO> userVO = userService.getUserVO(userPage.getRecords(), request);
-		userVOPage.setRecords(userVO);
-		// 检查参数是否合法
-		return ResultUtils.success(userService.cosMatchUserByPage(userVOPage, loginUser));
-	}
-	
 }
