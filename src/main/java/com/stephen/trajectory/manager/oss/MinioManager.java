@@ -6,9 +6,7 @@ import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.config.oss.minio.condition.MinioCondition;
 import com.stephen.trajectory.config.oss.minio.properties.MinioProperties;
 import com.stephen.trajectory.constants.FileConstant;
-import com.stephen.trajectory.model.entity.LogFiles;
 import com.stephen.trajectory.model.enums.oss.OssTypeEnum;
-import com.stephen.trajectory.service.LogFilesService;
 import com.stephen.trajectory.utils.encrypt.SHA3Utils;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -40,9 +38,6 @@ public class MinioManager {
 	
 	@Resource
 	private MinioProperties minioProperties;
-	
-	@Resource
-	private LogFilesService logFilesService;
 	
 	@Resource
 	private MinioClient minioClient;
@@ -81,38 +76,12 @@ public class MinioManager {
 					.build());
 			
 			
-			// 保存文件信息
-			LogFiles newFile = new LogFiles();
-			newFile.setFileKey(uniqueKey);
-			newFile.setFileName(key);
-			newFile.setFileOriginalName(originalName);
-			newFile.setFileSuffix(suffix);
-			newFile.setFileSize(fileSize);
-			newFile.setFileUrl(FileConstant.MINIO_HOST + filePath);
-			newFile.setFileOssType(OssTypeEnum.MINIO.getValue());
-			logFilesService.save(newFile);
-			
 		} catch (Exception e) {
 			log.error("文件上传失败: {}", e.getMessage());
 			throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败: " + e.getMessage());
 		}
 		
 		return FileConstant.MINIO_HOST + filePath;
-	}
-	
-	/**
-	 * 从MinIO中删除文件
-	 *
-	 * @param id 文件ID
-	 */
-	@Transactional(rollbackFor = Exception.class)
-	public void deleteInMinioById(Long id) {
-		LogFiles fileInDatabase = logFilesService.getById(id);
-		ThrowUtils.throwIf(fileInDatabase == null, ErrorCode.NOT_FOUND_ERROR, "文件不存在");
-		if (!logFilesService.removeById(fileInDatabase.getId())) {
-			throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-		}
-		deleteInMinioByUrl(fileInDatabase.getFileUrl());
 	}
 	
 	/**

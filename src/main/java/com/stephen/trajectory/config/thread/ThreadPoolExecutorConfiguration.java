@@ -51,7 +51,7 @@ public class ThreadPoolExecutorConfiguration {
 		
 		// 添加自定义监控日志
 		ScheduledExecutorService monitor = Executors.newScheduledThreadPool(1);
-		monitor.scheduleAtFixedRate(() -> logPoolStatus(threadPoolExecutor), 1, 10, TimeUnit.SECONDS);
+		monitor.scheduleAtFixedRate(() -> logPoolStatus(threadPoolExecutor), 1, 30, TimeUnit.SECONDS);
 		
 		return threadPoolExecutor;
 	}
