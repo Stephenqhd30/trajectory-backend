@@ -184,4 +184,10 @@ caffeine:
   # 是否允许空值null作为缓存的value
   allowNullValue: true
 
+# DeepSeek配置
+deepseek:
+  enabled: true
+  base-url: ${dev.deepseek.base-url}
+  api-key: ${dev.deepseek.api-key}
+
 

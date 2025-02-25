@@ -1,4 +1,4 @@
-package com.stephen.trajectory.config.ai.properties;
+package com.stephen.trajectory.config.ai.spark.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

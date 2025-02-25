@@ -100,6 +100,13 @@
 			<artifactId>xunfei-spark4j</artifactId>
 			<version>1.2.0</version>
 		</dependency>
+		<!-- 火山引擎 DeepSeekAI -->
+		<!-- https://www.volcengine.com/experience/ark -->
+		<dependency>
+			<groupId>com.volcengine</groupId>
+			<artifactId>volcengine-java-sdk-ark-runtime</artifactId>
+			<version>LATEST</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>

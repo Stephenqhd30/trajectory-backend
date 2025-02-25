@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.stephen.trajectory.common.*;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.constants.UserConstant;
-import com.stephen.trajectory.manager.ai.AIManager;
+import com.stephen.trajectory.manager.ai.DeepSeekAIManager;
+import com.stephen.trajectory.manager.ai.SparkAIManager;
 import com.stephen.trajectory.manager.redis.RedisLimiterManager;
 import com.stephen.trajectory.model.dto.chart.*;
 import com.stephen.trajectory.model.entity.Chart;
@@ -28,8 +29,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 图表信息接口
@@ -48,7 +47,10 @@ public class ChartController {
 	private UserService userService;
 	
 	@Resource
-	private AIManager aiManager;
+	private SparkAIManager sparkAiManager;
+	
+	@Resource
+	private DeepSeekAIManager deepSeekAiManager;
 	
 	@Resource
 	private RedisLimiterManager redisLimiterManager;
@@ -322,7 +324,7 @@ public class ChartController {
 		BIResponse biResponse = new BIResponse();
 		biResponse.setChartId(chart.getId());
 		// 调用 AI 服务生成配置
-		String result = aiManager.doChat(userInput);
+		String result = deepSeekAiManager.doChat(userInput);
 		String genChart = null;
 		String genResult = null;
 		log.info("AI 响应: {}", result);
@@ -425,7 +427,7 @@ public class ChartController {
 					throw new BusinessException(ErrorCode.SYSTEM_ERROR, "数据更新失败");
 				}
 				// 调用 AI 服务生成配置
-				String result = aiManager.doChat(userInput);
+				String result = deepSeekAiManager.doChat(userInput);
 				String genChart = null;
 				String genResult = null;
 				// 处理 AI 返回内容

@@ -59,7 +59,7 @@ public class WordUtils {
 			// Linux 环境：使用 LibreOffice 的命令行工具
 			linuxConvertToPdf(inputFilePath, outputFilePath);
 		} else {
-			throw new BusinessException(ErrorCode.WORD_ERROR, "当前操作系统不支持此操作");
+			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "当前操作系统不支持此操作");
 		}
 	}
 	
@@ -85,7 +85,7 @@ public class WordUtils {
 			
 			log.info("Word 文件已成功转换为 PDF 文件 (Windows)");
 		} catch (Exception e) {
-			throw new BusinessException(ErrorCode.WORD_ERROR, "证书生成失败 (Windows): " + e.getMessage());
+			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "证书生成失败 (Windows): " + e.getMessage());
 		}
 	}
 	
@@ -108,7 +108,7 @@ public class WordUtils {
 			executeLinuxCmd(command);
 			log.info("Word 文件已成功转换为 PDF 文件 (Linux)");
 		} catch (Exception e) {
-			throw new BusinessException(ErrorCode.WORD_ERROR, "证书生成失败 (Linux): " + e.getMessage());
+			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "证书生成失败 (Linux): " + e.getMessage());
 		}
 	}
 	

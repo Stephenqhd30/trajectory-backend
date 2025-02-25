@@ -1,6 +1,6 @@
 package com.stephen.trajectory.manager.ai;
 
-import com.stephen.trajectory.config.ai.condition.SparkAICondition;
+import com.stephen.trajectory.config.ai.spark.condition.SparkAICondition;
 import io.github.briqt.spark4j.SparkClient;
 import io.github.briqt.spark4j.constant.SparkApiVersion;
 import io.github.briqt.spark4j.exception.SparkException;
@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j
 @Service
 @Conditional(SparkAICondition.class)
-public class AIManager {
+public class SparkAIManager {
 	
 	@Resource
 	private SparkClient sparkClient;

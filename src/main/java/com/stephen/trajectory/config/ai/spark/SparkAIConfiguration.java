@@ -1,7 +1,7 @@
-package com.stephen.trajectory.config.ai;
+package com.stephen.trajectory.config.ai.spark;
 
-import com.stephen.trajectory.config.ai.condition.SparkAICondition;
-import com.stephen.trajectory.config.ai.properties.SparkAIProperties;
+import com.stephen.trajectory.config.ai.spark.condition.SparkAICondition;
+import com.stephen.trajectory.config.ai.spark.properties.SparkAIProperties;
 import io.github.briqt.spark4j.SparkClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
