@@ -148,3 +148,9 @@ websocket:
   boss-thread: 4
   # WORKER线程组线程数
   worker-thread: 16
+
+# DeepSeek配置
+deepseek:
+  enabled: true
+  base-url: ${prod.deepseek.baseUrl}
+  api-key: ${prod.deepseek.apiKey}

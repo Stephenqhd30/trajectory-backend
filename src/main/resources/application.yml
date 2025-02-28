@@ -187,7 +187,7 @@ caffeine:
 # DeepSeek配置
 deepseek:
   enabled: true
-  base-url: ${dev.deepseek.base-url}
-  api-key: ${dev.deepseek.api-key}
+  baseUrl: ${dev.deepseek.baseUrl}
+  apiKey: ${dev.deepseek.apiKey}
 
 
