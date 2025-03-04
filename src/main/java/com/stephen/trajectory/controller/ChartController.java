@@ -1,6 +1,7 @@
 package com.stephen.trajectory.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.stephen.trajectory.common.*;
 import com.stephen.trajectory.common.exception.BusinessException;
@@ -18,7 +19,6 @@ import com.stephen.trajectory.service.ChartService;
 import com.stephen.trajectory.service.UserService;
 import com.stephen.trajectory.utils.document.excel.ExcelUtils;
 import com.stephen.trajectory.utils.document.file.FileUtils;
-import com.stephen.trajectory.utils.json.JSONUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -346,7 +346,7 @@ public class ChartController {
 			throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 生成的分析结论格式错误");
 		}
 		// 校验生成的 JSON 格式
-		if (!JSONUtils.isValidJsonObject(genChart)) {
+		if (JSONUtil.isTypeJSONArray(genChart)) {
 			chartService.executorError(chart.getId(), "AI 生成的图表配置格式错误");
 			throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 生成的图表配置格式错误");
 		}
@@ -444,7 +444,7 @@ public class ChartController {
 					throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 生成的分析结论格式错误");
 				}
 				// 校验生成的 JSON 格式
-				if (!JSONUtils.isValidJsonObject(genChart)) {
+				if (JSONUtil.isTypeJSONArray(genChart)) {
 					chartService.executorError(chart.getId(), "AI 生成的图表配置格式错误");
 					throw new BusinessException(ErrorCode.OPERATION_ERROR, "AI 生成的图表配置格式错误");
 				}
