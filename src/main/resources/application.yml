@@ -152,14 +152,6 @@ oss:
     # 桶名称
     bucket: ${dev.oss.minio.bucket}
 
-# 讯飞星火api
-xunfei:
-  enabled: true
-  client:
-    appid: ${dev.xunfei.client.appid}
-    api-key: ${dev.xunfei.client.api-key}
-    api-secret: ${dev.xunfei.client.api-secret}
-
 # WebSocket配置
 websocket:
   # todo 是否开启（预先关闭）

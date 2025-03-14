@@ -7,7 +7,6 @@ import com.stephen.trajectory.common.*;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.constants.UserConstant;
 import com.stephen.trajectory.manager.ai.DeepSeekAIManager;
-import com.stephen.trajectory.manager.ai.SparkAIManager;
 import com.stephen.trajectory.manager.redis.RedisLimiterManager;
 import com.stephen.trajectory.model.dto.chart.*;
 import com.stephen.trajectory.model.entity.Chart;
@@ -45,9 +44,6 @@ public class ChartController {
 	
 	@Resource
 	private UserService userService;
-	
-	@Resource
-	private SparkAIManager sparkAiManager;
 	
 	@Resource
 	private DeepSeekAIManager deepSeekAiManager;

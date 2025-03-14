@@ -2,7 +2,7 @@ package com.stephen.trajectory.manager.ai;
 
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.exception.BusinessException;
-import com.stephen.trajectory.config.ai.spark.condition.SparkAICondition;
+import com.stephen.trajectory.config.ai.deepseek.condition.DeepSeekAICondition;
 import com.volcengine.ark.runtime.model.completion.chat.ChatCompletionRequest;
 import com.volcengine.ark.runtime.model.completion.chat.ChatMessage;
 import com.volcengine.ark.runtime.model.completion.chat.ChatMessageRole;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-@Conditional(SparkAICondition.class)
+@Conditional(DeepSeekAICondition.class)
 public class DeepSeekAIManager {
 	
 	private static final String DEFAULT_MODAL = "deepseek-v3-241226";

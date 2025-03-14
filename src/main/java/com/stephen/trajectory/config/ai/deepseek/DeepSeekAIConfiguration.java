@@ -3,7 +3,6 @@ package com.stephen.trajectory.config.ai.deepseek;
 import com.stephen.trajectory.config.ai.deepseek.condition.DeepSeekAICondition;
 import com.stephen.trajectory.config.ai.deepseek.properties.DeepSeekAIProperties;
 import com.volcengine.ark.runtime.service.ArkService;
-import io.github.briqt.spark4j.SparkClient;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
