@@ -130,12 +130,4 @@ public interface UserService extends IService<User> {
 	 * @return {@link QueryWrapper<User>}
 	 */
 	QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
-	
-	/**
-	 * 导入用户
-	 *
-	 * @param file file
-	 * @return {@link Map}<{@link String}, {@link Object}>
-	 */
-	Map<String, Object> importUsers(MultipartFile file);
 }

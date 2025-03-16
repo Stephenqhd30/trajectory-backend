@@ -10,7 +10,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.stephen.trajectory.aop.listener.UserExcelListener;
 import com.stephen.trajectory.common.ErrorCode;
 import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.common.exception.BusinessException;
@@ -218,13 +217,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 	 */
 	@Override
 	public User getLoginUserPermitNull(HttpServletRequest request) {
-		// 先判断是否已登录
-		User currentUser = (User) StpUtil.getSession().get(UserConstant.USER_LOGIN_STATE);
-		if (currentUser == null || currentUser.getId() == null) {
+		// 先判断是否登录
+		if (!StpUtil.isLogin()) {
 			return null;
 		}
-		// 从数据库查询（追求性能的话可以注释，直接走缓存）
-		long userId = currentUser.getId();
+		// 直接获取用户 ID
+		long userId = StpUtil.getLoginIdAsLong();
 		return this.getById(userId);
 	}
 	
@@ -385,38 +383,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
 				sortField);
 		return queryWrapper;
-	}
-	
-	/**
-	 * 导入用户数据
-	 *
-	 * @param file 上传的 Excel 文件
-	 * @return 返回成功和错误信息
-	 */
-	@Override
-	public Map<String, Object> importUsers(MultipartFile file) {
-		ThrowUtils.throwIf(file == null || file.isEmpty(), ErrorCode.OPERATION_ERROR, "上传的文件为空");
-		
-		// 传递 userService 实例给 UserExcelListener
-		UserExcelListener listener = new UserExcelListener(this);
-		
-		try {
-			EasyExcel.read(file.getInputStream(), User.class, listener).sheet().doRead();
-		} catch (IOException e) {
-			log.error("文件读取失败: {}", e.getMessage());
-			throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件读取失败");
-		} catch (ExcelAnalysisException e) {
-			log.error("Excel解析失败: {}", e.getMessage());
-			throw new BusinessException(ErrorCode.OPERATION_ERROR, "Excel解析失败");
-		}
-		
-		// 返回处理结果，包括成功和异常的数据
-		Map<String, Object> result = new HashMap<>();
-		// 获取异常记录
-		result.put("errorRecords", listener.getErrorRecords());
-		log.info("成功导入 {} 条用户数据，{} 条错误数据", listener.getSuccessRecords().size(), listener.getErrorRecords().size());
-		
-		return result;
 	}
 	
 }

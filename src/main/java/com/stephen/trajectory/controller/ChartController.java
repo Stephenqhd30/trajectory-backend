@@ -49,13 +49,10 @@ public class ChartController {
 	private DeepSeekAIManager deepSeekAiManager;
 	
 	@Resource
-	private RedisLimiterManager redisLimiterManager;
-	
-	@Resource
 	private ThreadPoolExecutor threadPoolExecutor;
-
-
-// region 增删改查
+	
+	
+	// region 增删改查
 	
 	/**
 	 * 创建图表信息

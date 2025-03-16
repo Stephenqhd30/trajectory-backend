@@ -2,11 +2,11 @@ package com.stephen.trajectory.utils.rabbitmq;
 
 import cn.hutool.json.JSONUtil;
 import com.stephen.trajectory.config.bean.SpringContextHolder;
+import com.stephen.trajectory.config.rabbitmq.consumerExample.model.RabbitMessage;
 import com.stephen.trajectory.config.rabbitmq.defaultMq.DefaultRabbitMq;
 import com.stephen.trajectory.config.rabbitmq.defaultMq.DefaultRabbitMqWithDelay;
 import com.stephen.trajectory.config.rabbitmq.defaultMq.DefaultRabbitMqWithDlx;
 import com.stephen.trajectory.config.rabbitmq.properties.RabbitMqProperties;
-import com.stephen.trajectory.utils.rabbitmq.model.RabbitMessage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

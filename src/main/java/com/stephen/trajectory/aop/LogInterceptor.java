@@ -38,6 +38,10 @@ public class LogInterceptor {
 		// 生成请求唯一 id
 		String requestId = UUID.randomUUID().toString();
 		String url = httpServletRequest.getRequestURI();
+		// 放行指定路径
+		if ("/es/search/post/page/vo".equals(url) || "/es/search/chart/page/vo".equals(url)) {
+			return point.proceed();
+		}
 		// 获取请求参数
 		Object[] args = point.getArgs();
 		String reqParam = "[" + StringUtils.join(args, ", ") + "]";

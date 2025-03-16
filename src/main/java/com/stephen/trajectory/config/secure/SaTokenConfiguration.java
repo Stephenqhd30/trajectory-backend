@@ -39,6 +39,8 @@ public class SaTokenConfiguration implements WebMvcConfigurer {
 			add("/user/register");
 			add("/user/login");
 			add("/user/get/login");
+			add("/post/list/page/vo");
+			add("/chart/list/page/vo");
 			add("/swagger-ui/**");
 			add("/v2/api-docs/**");
 			add("/swagger-resources/**");
