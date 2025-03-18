@@ -1,11 +1,11 @@
-package com.stephen.trajectory.config.rabbitmq.consumerExample;
+package com.stephen.trajectory.rabbitmq.consumer;
 
 import cn.hutool.json.JSONUtil;
 import com.rabbitmq.client.Channel;
-import com.stephen.trajectory.config.rabbitmq.consumerExample.model.RabbitMessage;
-import com.stephen.trajectory.config.rabbitmq.defaultMq.DefaultRabbitMq;
-import com.stephen.trajectory.config.rabbitmq.defaultMq.DefaultRabbitMqWithDelay;
-import com.stephen.trajectory.config.rabbitmq.defaultMq.DefaultRabbitMqWithDlx;
+import com.stephen.trajectory.rabbitmq.consumer.model.RabbitMessage;
+import com.stephen.trajectory.rabbitmq.defaultMq.DefaultRabbitMq;
+import com.stephen.trajectory.rabbitmq.defaultMq.DefaultRabbitMqWithDelay;
+import com.stephen.trajectory.rabbitmq.defaultMq.DefaultRabbitMqWithDlx;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

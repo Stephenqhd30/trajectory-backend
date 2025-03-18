@@ -1,4 +1,4 @@
-package com.stephen.trajectory.config.rabbitmq;
+package com.stephen.trajectory.rabbitmq;
 
 import lombok.extern.slf4j.Slf4j;
 

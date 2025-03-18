@@ -31,16 +31,6 @@ public class LoginUserVO implements Serializable {
 	private String userAvatar;
 	
 	/**
-	 * 用户简介
-	 */
-	private String userProfile;
-	
-	/**
-	 * 性别（0-男，1-女，2-保密）
-	 */
-	private Integer userGender;
-	
-	/**
 	 * 用户角色：user/admin/ban
 	 */
 	private String userRole;
@@ -64,11 +54,6 @@ public class LoginUserVO implements Serializable {
 	 * 更新时间
 	 */
 	private Date updateTime;
-	
-	/**
-	 * 编辑时间
-	 */
-	private Date editTime;
 	
 	/**
 	 * 用户标签(JSON字符数组)

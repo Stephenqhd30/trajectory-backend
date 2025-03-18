@@ -1,7 +1,4 @@
 {
-  "aliases": {
-	"post": {}
-  },
   "mappings": {
 	"properties": {
 	  "title": {

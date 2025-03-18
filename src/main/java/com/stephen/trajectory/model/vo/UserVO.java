@@ -30,30 +30,9 @@ public class UserVO implements Serializable {
 	private String userName;
 	
 	/**
-	 * 性别（0-男，1-女，2-保密）
-	 */
-	private Integer userGender;
-	
-	/**
-	 * 开放平台id
-	 */
-	private String unionId;
-	
-	/**
-	 * 公众号openId
-	 */
-	private String mpOpenId;
-	
-	
-	/**
 	 * 用户头像
 	 */
 	private String userAvatar;
-	
-	/**
-	 * 用户简介
-	 */
-	private String userProfile;
 	
 	
 	/**

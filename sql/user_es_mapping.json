@@ -1,7 +1,4 @@
 {
-  "aliases": {
-	"user": {}
-  },
   "mappings": {
 	"properties": {
 	  "id": {

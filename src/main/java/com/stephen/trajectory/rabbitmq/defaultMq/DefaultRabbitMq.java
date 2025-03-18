@@ -1,4 +1,4 @@
-package com.stephen.trajectory.config.rabbitmq.defaultMq;
+package com.stephen.trajectory.rabbitmq.defaultMq;
 
 import com.stephen.trajectory.config.rabbitmq.condition.RabbitMqCondition;
 import lombok.extern.slf4j.Slf4j;

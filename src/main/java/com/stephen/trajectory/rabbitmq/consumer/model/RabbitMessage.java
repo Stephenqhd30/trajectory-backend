@@ -1,4 +1,4 @@
-package com.stephen.trajectory.config.rabbitmq.consumerExample.model;
+package com.stephen.trajectory.rabbitmq.consumer.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
