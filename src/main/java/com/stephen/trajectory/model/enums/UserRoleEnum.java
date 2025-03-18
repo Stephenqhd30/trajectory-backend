@@ -1,4 +1,4 @@
-package com.stephen.trajectory.model.enums.user;
+package com.stephen.trajectory.model.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

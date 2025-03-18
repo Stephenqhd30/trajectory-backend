@@ -30,19 +30,9 @@ public class UserAddRequest implements Serializable {
 	private String userAvatar;
 	
 	/**
-	 * 性别（0-男，1-女，2-保密）
-	 */
-	private Integer userGender;
-	
-	/**
 	 * 用户角色: user, admin
 	 */
 	private String userRole;
-	
-	/**
-	 * 用户简介
-	 */
-	private String userProfile;
 	
 	/**
 	 * 用户邮箱

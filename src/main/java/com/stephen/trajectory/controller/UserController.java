@@ -315,7 +315,6 @@ public class UserController {
 			user.setUserPassword(encryptPassword);
 		}
 		user.setId(loginUser.getId());
-		user.setEditTime(new Date());
 		boolean result = userService.updateById(user);
 		ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
 		return ResultUtils.success(true);

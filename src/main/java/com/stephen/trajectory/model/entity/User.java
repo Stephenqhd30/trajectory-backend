@@ -49,18 +49,6 @@ public class User implements Serializable {
 	private String userAvatar;
 	
 	/**
-	 * 性别（0-男，1-女，2-保密）
-	 */
-	@ExcelProperty(value = "性别（0-男，1-女，2-保密）")
-	private Integer userGender;
-	
-	/**
-	 * 用户简介
-	 */
-	@ExcelProperty(value = "用户简介")
-	private String userProfile;
-	
-	/**
 	 * 用户角色：user/admin/ban
 	 */
 	@ExcelIgnore
@@ -83,12 +71,6 @@ public class User implements Serializable {
 	 */
 	@ExcelIgnore
 	private String tags;
-	
-	/**
-	 * 编辑时间
-	 */
-	@ExcelIgnore
-	private Date editTime;
 	
 	/**
 	 * 创建时间

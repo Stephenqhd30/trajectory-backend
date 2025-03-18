@@ -3,8 +3,6 @@ package com.stephen.trajectory.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.exception.ExcelAnalysisException;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -20,8 +18,7 @@ import com.stephen.trajectory.constants.UserConstant;
 import com.stephen.trajectory.mapper.UserMapper;
 import com.stephen.trajectory.model.dto.user.UserQueryRequest;
 import com.stephen.trajectory.model.entity.User;
-import com.stephen.trajectory.model.enums.user.UserGenderEnum;
-import com.stephen.trajectory.model.enums.user.UserRoleEnum;
+import com.stephen.trajectory.model.enums.UserRoleEnum;
 import com.stephen.trajectory.model.vo.LoginUserVO;
 import com.stephen.trajectory.model.vo.UserVO;
 import com.stephen.trajectory.service.UserService;
@@ -34,11 +31,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,8 +62,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		// todo 从对象中取值
 		String userAccount = user.getUserAccount();
 		String userName = user.getUserName();
-		Integer userGender = user.getUserGender();
-		String userProfile = user.getUserProfile();
 		String userEmail = user.getUserEmail();
 		String userPhone = user.getUserPhone();
 		String tags = user.getTags();
@@ -87,17 +80,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		if (StringUtils.isNotBlank(userName)) {
 			ThrowUtils.throwIf(userName.length() < 4 || userName.length() > 20, ErrorCode.PARAMS_ERROR, "用户账号过短");
 		}
-		if (StringUtils.isNotBlank(userProfile)) {
-			ThrowUtils.throwIf(userProfile.length() > 50, ErrorCode.PARAMS_ERROR, "用户简介不能多余50字");
-		}
 		if (StringUtils.isNotBlank(userEmail)) {
 			ThrowUtils.throwIf(!RegexUtils.checkEmail(userEmail), ErrorCode.PARAMS_ERROR, "用户邮箱有误");
 		}
 		if (StringUtils.isNotBlank(userPhone)) {
 			ThrowUtils.throwIf(!RegexUtils.checkMobile(userPhone), ErrorCode.PARAMS_ERROR, "用户手机号码有误");
-		}
-		if (ObjectUtils.isNotEmpty(userGender)) {
-			ThrowUtils.throwIf(UserGenderEnum.getEnumByValue(userGender) == null, ErrorCode.PARAMS_ERROR, "性别填写有误");
 		}
 		if (StringUtils.isNotBlank(tags)) {
 			ThrowUtils.throwIf(tags.length() > 1024, ErrorCode.PARAMS_ERROR, "标签过长,请重新选择适合您的标签");
@@ -344,12 +331,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		}
 		Long id = userQueryRequest.getId();
 		Long notId = userQueryRequest.getNotId();
-		String unionId = userQueryRequest.getUnionId();
-		String mpOpenId = userQueryRequest.getMpOpenId();
 		String userName = userQueryRequest.getUserName();
-		String userProfile = userQueryRequest.getUserProfile();
 		String userRole = userQueryRequest.getUserRole();
-		Integer userGender = userQueryRequest.getUserGender();
 		String sortField = userQueryRequest.getSortField();
 		String sortOrder = userQueryRequest.getSortOrder();
 		String userEmail = userQueryRequest.getUserEmail();
@@ -367,16 +350,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		// 精准查询
 		queryWrapper.eq(id != null, "id", id);
 		queryWrapper.ne(ObjectUtils.isNotEmpty(notId), "id", notId);
-		queryWrapper.eq(StringUtils.isNotBlank(unionId), "unionId", unionId);
-		queryWrapper.eq(StringUtils.isNotBlank(mpOpenId), "mpOpenId", mpOpenId);
 		queryWrapper.eq(StringUtils.isNotBlank(userRole), "userRole", userRole);
-		queryWrapper.eq(ObjectUtils.isNotEmpty(userGender), "userGender", userGender);
 		// 拼接查询条件
 		if (StringUtils.isNotBlank(searchText)) {
-			queryWrapper.and(qw -> qw.like("title", searchText).or().like("content", searchText));
+			queryWrapper.and(qw -> qw.like("userName", searchText).or().like("userEmail", searchText));
 		}
 		// 模糊查询
-		queryWrapper.like(StringUtils.isNotBlank(userProfile), "userProfile", userProfile);
 		queryWrapper.like(StringUtils.isNotBlank(userName), "userName", userName);
 		queryWrapper.like(StringUtils.isNotBlank(userEmail), "userEmail", userEmail);
 		queryWrapper.like(StringUtils.isNotBlank(userPhone), "userPhone", userPhone);

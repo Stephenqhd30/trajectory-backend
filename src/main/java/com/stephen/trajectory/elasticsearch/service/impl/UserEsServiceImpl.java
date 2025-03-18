@@ -8,7 +8,6 @@ import com.stephen.trajectory.elasticsearch.service.UserEsService;
 import com.stephen.trajectory.mapper.UserMapper;
 import com.stephen.trajectory.model.dto.user.UserQueryRequest;
 import com.stephen.trajectory.model.entity.User;
-import com.stephen.trajectory.model.enums.user.UserGenderEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -109,8 +108,6 @@ public class UserEsServiceImpl implements UserEsService {
 		Long id = userQueryRequest.getId();
 		Long notId = userQueryRequest.getNotId();
 		String userName = userQueryRequest.getUserName();
-		Integer userGender = userQueryRequest.getUserGender();
-		String userProfile = userQueryRequest.getUserProfile();
 		String userRole = userQueryRequest.getUserRole();
 		String userEmail = userQueryRequest.getUserEmail();
 		String userPhone = userQueryRequest.getUserPhone();
@@ -143,12 +140,6 @@ public class UserEsServiceImpl implements UserEsService {
 		}
 		
 		// 4. 处理其它字段的精确查询（如用户角色、性别等）
-		if (ObjectUtils.isNotEmpty(userGender) && UserGenderEnum.getEnumByValue(userGender) != null) {
-			boolQueryBuilder.filter(QueryBuilders.termQuery("userGender", userGender));
-		}
-		if (StringUtils.isNotBlank(userProfile)) {
-			boolQueryBuilder.filter(QueryBuilders.termQuery("userProfile", userProfile));
-		}
 		if (StringUtils.isNotBlank(userRole)) {
 			boolQueryBuilder.filter(QueryBuilders.termQuery("userRole", userRole));
 		}
@@ -163,15 +154,10 @@ public class UserEsServiceImpl implements UserEsService {
 		if (StringUtils.isNotBlank(userName)) {
 			boolQueryBuilder.should(QueryBuilders.matchQuery("userName", userName));
 		}
-		if (StringUtils.isNotBlank(userProfile)) {
-			boolQueryBuilder.should(QueryBuilders.matchQuery("userProfile", userProfile));
-		}
 		
 		// 全文搜索: 按标题、内容检索
 		if (StringUtils.isNotBlank(searchText)) {
 			boolQueryBuilder.should(QueryBuilders.matchQuery("userName", searchText));
-			boolQueryBuilder.should(QueryBuilders.matchQuery("userProfile", searchText));
-			boolQueryBuilder.minimumShouldMatch(1);
 		} else {
 			// 如果没有提供 searchText，构建一个默认查询条件（匹配所有记录）
 			boolQueryBuilder.must(QueryBuilders.matchAllQuery());

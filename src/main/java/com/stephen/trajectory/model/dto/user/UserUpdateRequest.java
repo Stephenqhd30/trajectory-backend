@@ -33,19 +33,9 @@ public class UserUpdateRequest implements Serializable {
 	private String userAvatar;
 	
 	/**
-	 * 简介
-	 */
-	private String userProfile;
-	
-	/**
 	 * 用户角色：user/admin/ban
 	 */
 	private String userRole;
-	
-	/**
-	 * 性别（0-男，1-女，2-保密）
-	 */
-	private Integer userGender;
 	
 	/**
 	 * 用户邮箱

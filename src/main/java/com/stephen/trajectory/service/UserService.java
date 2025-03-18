@@ -3,16 +3,13 @@ package com.stephen.trajectory.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.stephen.trajectory.model.dto.user.UserMatchRequest;
 import com.stephen.trajectory.model.dto.user.UserQueryRequest;
 import com.stephen.trajectory.model.entity.User;
 import com.stephen.trajectory.model.vo.LoginUserVO;
 import com.stephen.trajectory.model.vo.UserVO;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 用户服务

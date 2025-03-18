@@ -9,24 +9,21 @@
 		<result property="userAccount" column="userAccount" jdbcType="VARCHAR"/>
 		<result property="userPassword" column="userPassword" jdbcType="VARCHAR"/>
 		<result property="userName" column="userName" jdbcType="VARCHAR"/>
-		<result property="userGender" column="userGender" jdbcType="TINYINT"/>
 		<result property="userPhone" column="userPhone" jdbcType="VARCHAR"/>
 		<result property="userAvatar" column="userAvatar" jdbcType="VARCHAR"/>
-		<result property="userProfile" column="userProfile" jdbcType="VARCHAR"/>
 		<result property="userRole" column="userRole" jdbcType="VARCHAR"/>
 		<result property="userEmail" column="userEmail" jdbcType="VARCHAR"/>
 		<result property="tags" column="userEmail" jdbcType="VARCHAR"/>
 		<result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
-		<result property="editTime" column="editTime" jdbcType="TIMESTAMP"/>
 		<result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
 		<result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
 	</resultMap>
 
 	<sql id="Base_Column_List">
 		id
-		,userAccount,userPassword,userName,userGender,
-        userPhone,userAvatar,userProfile, tags,
-        userRole,userEmail,createTime, editTime,
+		,userAccount,userPassword,userName,
+        userPhone,userAvatar, tags,
+        userRole,userEmail,createTime,
         updateTime,isDelete
 	</sql>
 	<select id="listUserWithDelete" resultType="com.stephen.trajectory.model.entity.User">
