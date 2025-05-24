@@ -39,6 +39,8 @@ spring:
   # todo 需替换配置，然后取消注释
   elasticsearch:
     uris: ${dev.elasticsearch.uris}
+    username: ${dev.elasticsearch.username}
+    password: ${dev.elasticsearch.password}
   # RabbitMQ配置
   rabbitmq:
     # todo 是否开启RabbitMQ（预先关闭）
@@ -135,6 +137,15 @@ redisson:
   database: ${dev.redisson.database}
   host: ${dev.redisson.host}
   port: ${dev.redisson.port}
+# 腾讯云COS对象存储配置
+# todo 是否开启
+cos:
+  client:
+    enable: true
+    accessKey: ${dev.cos.client.accessKey}
+    secretKey: ${dev.cos.client.secretKey}
+    region: ${dev.cos.client.region}
+    bucket: ${dev.cos.client.bucket}
 # 对象存储配置
 oss:
   # MinIO OSS配置

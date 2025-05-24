@@ -15,5 +15,5 @@ public interface FileConstant {
 	/**
 	 * OSS 访问地址
 	 */
-	String MINIO_HOST = "http://121.36.17.18:9000/trajectory";
+	String MINIO_HOST = "http://152.136.235.18:9000/trajectory";
 }
