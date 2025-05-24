@@ -7,7 +7,6 @@ import com.stephen.trajectory.common.*;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.constants.UserConstant;
 import com.stephen.trajectory.manager.ai.DeepSeekAIManager;
-import com.stephen.trajectory.manager.redis.RedisLimiterManager;
 import com.stephen.trajectory.model.dto.chart.*;
 import com.stephen.trajectory.model.entity.Chart;
 import com.stephen.trajectory.model.entity.User;
@@ -130,11 +129,7 @@ public class ChartController {
 		Chart chart = new Chart();
 		BeanUtils.copyProperties(chartUpdateRequest, chart);
 		// 数据校验
-		try {
-			chartService.validChart(chart, false);
-		} catch (Exception e) {
-			throw new BusinessException(ErrorCode.PARAMS_ERROR, e.getMessage());
-		}
+		chartService.validChart(chart, false);
 		// 判断是否存在
 		long id = chartUpdateRequest.getId();
 		Chart oldChart = chartService.getById(id);
@@ -216,16 +211,14 @@ public class ChartController {
 	@PostMapping("/my/list/page/vo")
 	public BaseResponse<Page<ChartVO>> listMyChartVOByPage(@RequestBody ChartQueryRequest chartQueryRequest,
 	                                                       HttpServletRequest request) {
-		ThrowUtils.throwIf(chartQueryRequest == null,
-				ErrorCode.PARAMS_ERROR);
+		ThrowUtils.throwIf(chartQueryRequest == null, ErrorCode.PARAMS_ERROR);
 		// 补充查询条件，只查询当前登录用户的数据
 		User loginUser = userService.getLoginUser(request);
 		chartQueryRequest.setUserId(loginUser.getId());
 		long current = chartQueryRequest.getCurrent();
 		long size = chartQueryRequest.getPageSize();
 		// 查询数据库
-		Page<Chart> chartPage = chartService.page(new Page<>(current, size),
-				chartService.getQueryWrapper(chartQueryRequest));
+		Page<Chart> chartPage = chartService.page(new Page<>(current, size), chartService.getQueryWrapper(chartQueryRequest));
 		// 获取封装类
 		return ResultUtils.success(chartService.getChartVOPage(chartPage, request));
 	}
@@ -248,15 +241,13 @@ public class ChartController {
 		BeanUtils.copyProperties(chartEditRequest, chart);
 		// 数据校验
 		chartService.validChart(chart, false);
-		User loginUser = userService.getLoginUser(request);
+		User loginUser = userService.getLoginUserPermitNull(request);
 		// 判断是否存在
 		long id = chartEditRequest.getId();
 		Chart oldChart = chartService.getById(id);
-		ThrowUtils.throwIf(oldChart == null,
-				ErrorCode.NOT_FOUND_ERROR);
+		ThrowUtils.throwIf(oldChart == null, ErrorCode.NOT_FOUND_ERROR);
 		// 仅本人或管理员可编辑
-		if (!oldChart.getUserId().equals(loginUser.getId()) &&
-				!userService.isAdmin(loginUser)) {
+		if (!oldChart.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
 			throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
 		}
 		// 操作数据库
@@ -289,7 +280,6 @@ public class ChartController {
 		FileUtils.validFile(multipartFile, fileUploadBizEnum);
 		// 数据校验
 		chartService.validChart(chart, true);
-		
 		// 需要用户登录才能调用接口
 		User loginUser = userService.getLoginUser(request);
 		// 限流
@@ -301,7 +291,6 @@ public class ChartController {
 		}
 		// 构建用户输入
 		String userInput = chartService.constructUserInput(chart, excelToCsv);
-		
 		// todo 填充默认数据
 		chart.setChartData(excelToCsv);
 		chart.setStatus(ChartStatusEnum.WAIT.getValue());
@@ -372,7 +361,6 @@ public class ChartController {
 	@PostMapping("/gen/async")
 	public BaseResponse<BIResponse> genChartByAiAsync(@RequestPart("file") MultipartFile multipartFile,
 	                                                  GenChartByAiRequest genChartByAiRequest, HttpServletRequest request) {
-		
 		// 验证用户和请求参数
 		Chart chart = new Chart();
 		BeanUtils.copyProperties(genChartByAiRequest, chart);

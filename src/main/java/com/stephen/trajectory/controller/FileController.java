@@ -49,14 +49,11 @@ public class FileController {
 		String biz = uploadFileRequest.getBiz();
 		FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
 		ThrowUtils.throwIf(fileUploadBizEnum == null, ErrorCode.PARAMS_ERROR, "文件上传有误");
-		
 		// 校验文件类型
 		this.validFile(multipartFile, fileUploadBizEnum);
 		User loginUser = userService.getLoginUser(request);
-		
 		// 文件目录：根据业务、用户来划分
 		String path = String.format("/%s/%s/%s", "trajectory", fileUploadBizEnum.getValue(), loginUser.getId());
-		
 		// 直接上传文件
 		String s = CosUtils.uploadFile(multipartFile, path);
 		// 返回可访问地址

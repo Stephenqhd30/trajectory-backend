@@ -53,11 +53,7 @@ public class PostCommentController {
 		PostComment postComment = new PostComment();
 		BeanUtils.copyProperties(postCommentAddRequest, postComment);
 		// 数据校验
-		try {
-			postCommentService.validPostComment(postComment, true);
-		} catch (Exception e) {
-			throw new BusinessException(ErrorCode.PARAMS_ERROR, e.getMessage());
-		}
+		postCommentService.validPostComment(postComment, true);
 		// todo 填充默认值
 		User loginUser = userService.getLoginUser(request);
 		postComment.setUserId(loginUser.getId());
@@ -112,11 +108,7 @@ public class PostCommentController {
 		PostComment postComment = new PostComment();
 		BeanUtils.copyProperties(postCommentUpdateRequest, postComment);
 		// 数据校验
-		try {
-			postCommentService.validPostComment(postComment, false);
-		} catch (Exception e) {
-			throw new BusinessException(ErrorCode.PARAMS_ERROR, e.getMessage());
-		}
+		postCommentService.validPostComment(postComment, false);
 		// 判断是否存在
 		long id = postCommentUpdateRequest.getId();
 		PostComment oldPostComment = postCommentService.getById(id);
@@ -155,8 +147,7 @@ public class PostCommentController {
 		long current = postCommentQueryRequest.getCurrent();
 		long size = postCommentQueryRequest.getPageSize();
 		// 查询数据库
-		Page<PostComment> postCommentPage = postCommentService.page(new Page<>(current, size),
-				postCommentService.getQueryWrapper(postCommentQueryRequest));
+		Page<PostComment> postCommentPage = postCommentService.page(new Page<>(current, size), postCommentService.getQueryWrapper(postCommentQueryRequest));
 		return ResultUtils.success(postCommentPage);
 	}
 	
@@ -175,8 +166,7 @@ public class PostCommentController {
 		// 限制爬虫
 		ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
 		// 查询数据库
-		Page<PostComment> postCommentPage = postCommentService.page(new Page<>(current, size),
-				postCommentService.getQueryWrapper(postCommentQueryRequest));
+		Page<PostComment> postCommentPage = postCommentService.page(new Page<>(current, size), postCommentService.getQueryWrapper(postCommentQueryRequest));
 		// 获取封装类
 		return ResultUtils.success(postCommentService.getPostCommentVOPage(postCommentPage, request));
 	}

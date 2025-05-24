@@ -89,7 +89,7 @@ public class PostController {
 		if (deleteRequest == null || deleteRequest.getId() <= 0) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
 		}
-		User user = userService.getLoginUser(request);
+		User user = userService.getLoginUserPermitNull(request);
 		long id = deleteRequest.getId();
 		// 判断是否存在
 		Post oldPost = postService.getById(id);
@@ -140,9 +140,7 @@ public class PostController {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR);
 		}
 		Post post = postService.getById(id);
-		if (post == null) {
-			throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-		}
+		ThrowUtils.throwIf(post == null, ErrorCode.NOT_FOUND_ERROR);
 		return ResultUtils.success(postService.getPostVO(post, request));
 	}
 	
@@ -157,8 +155,7 @@ public class PostController {
 	public BaseResponse<Page<Post>> listPostByPage(@RequestBody PostQueryRequest postQueryRequest) {
 		long current = postQueryRequest.getCurrent();
 		long size = postQueryRequest.getPageSize();
-		Page<Post> postPage = postService.page(new Page<>(current, size),
-				postService.getQueryWrapper(postQueryRequest));
+		Page<Post> postPage = postService.page(new Page<>(current, size), postService.getQueryWrapper(postQueryRequest));
 		return ResultUtils.success(postPage);
 	}
 	
@@ -227,14 +224,13 @@ public class PostController {
 	public BaseResponse<Page<PostVO>> listMyPostVOByPage(@RequestBody PostQueryRequest postQueryRequest,
 	                                                     HttpServletRequest request) {
 		ThrowUtils.throwIf(postQueryRequest == null, ErrorCode.PARAMS_ERROR);
-		User loginUser = userService.getLoginUser(request);
+		User loginUser = userService.getLoginUserPermitNull(request);
 		postQueryRequest.setUserId(loginUser.getId());
 		long current = postQueryRequest.getCurrent();
 		long size = postQueryRequest.getPageSize();
 		// 限制爬虫
 		ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-		Page<Post> postPage = postService.page(new Page<>(current, size),
-				postService.getQueryWrapper(postQueryRequest));
+		Page<Post> postPage = postService.page(new Page<>(current, size), postService.getQueryWrapper(postQueryRequest));
 		return ResultUtils.success(postService.getPostVOPage(postPage, request));
 	}
 	

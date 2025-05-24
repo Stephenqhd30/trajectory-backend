@@ -91,7 +91,6 @@ public class RabbitMqConsumer {
 			// 使用 Hutool 的 JSON 工具将消息体转换为 RabbitMessage 对象
 			RabbitMessage rabbitMessage = JSONUtil.toBean(new String(message.getBody()), RabbitMessage.class);
 			System.out.printf("[%s] 收到消息: %s%n", queueType, rabbitMessage);
-			
 			// 手动确认消息已被成功处理
 			channel.basicAck(tag, false);
 		} catch (Exception e) {

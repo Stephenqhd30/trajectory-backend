@@ -24,8 +24,7 @@ import java.util.UUID;
 @Slf4j
 public class RabbitMqUtils {
 	
-	private static final RabbitTemplate RABBITMQ_TEMPLATE =
-			SpringContextHolder.getBean("rabbitTemplateBean", RabbitTemplate.class);
+	private static final RabbitTemplate RABBITMQ_TEMPLATE = SpringContextHolder.getBean("rabbitTemplateBean", RabbitTemplate.class);
 	
 	private final RabbitMqProperties rabbitMqProperties;
 	private static long maxAwaitTimeout;

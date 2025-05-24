@@ -104,8 +104,7 @@ public class PostFavourController {
 		Long userId = postFavourQueryRequest.getUserId();
 		// 限制爬虫
 		ThrowUtils.throwIf(size > 20 || userId == null, ErrorCode.PARAMS_ERROR);
-		Page<Post> postPage = postFavourService.listFavourPostByPage(new Page<>(current, size),
-				postService.getQueryWrapper(postFavourQueryRequest.getPostQueryRequest()), userId);
+		Page<Post> postPage = postFavourService.listFavourPostByPage(new Page<>(current, size), postService.getQueryWrapper(postFavourQueryRequest.getPostQueryRequest()), userId);
 		return ResultUtils.success(postService.getPostVOPage(postPage, request));
 	}
 }
