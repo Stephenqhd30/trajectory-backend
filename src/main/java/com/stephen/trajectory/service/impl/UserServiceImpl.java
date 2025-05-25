@@ -13,8 +13,6 @@ import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.config.secure.utils.DeviceUtils;
 import com.stephen.trajectory.constants.CommonConstant;
-import com.stephen.trajectory.constants.SaltConstant;
-import com.stephen.trajectory.constants.UserConstant;
 import com.stephen.trajectory.mapper.UserMapper;
 import com.stephen.trajectory.model.dto.user.UserQueryRequest;
 import com.stephen.trajectory.model.entity.User;

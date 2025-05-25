@@ -148,3 +148,8 @@ fabric.properties
 src/main/resources/application.properties
 src/main/resources/application-prod.properties
 
+/src/main/java/com/stephen/trajectory/generate/
+/src/main/java/com/stephen/trajectory/constants/SaltConstant.java
+/src/main/java/com/stephen/trajectory/constants/UserConstant.java
+/src/main/java/com/stephen/trajectory/constants/RedisConstant.java
+/src/main/resources/templates/
