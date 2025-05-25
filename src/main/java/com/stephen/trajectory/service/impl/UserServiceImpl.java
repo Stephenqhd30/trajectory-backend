@@ -13,6 +13,8 @@ import com.stephen.trajectory.common.ThrowUtils;
 import com.stephen.trajectory.common.exception.BusinessException;
 import com.stephen.trajectory.config.secure.utils.DeviceUtils;
 import com.stephen.trajectory.constants.CommonConstant;
+import com.stephen.trajectory.constants.SaltConstant;
+import com.stephen.trajectory.constants.UserConstant;
 import com.stephen.trajectory.mapper.UserMapper;
 import com.stephen.trajectory.model.dto.user.UserQueryRequest;
 import com.stephen.trajectory.model.entity.User;
@@ -20,17 +22,16 @@ import com.stephen.trajectory.model.enums.UserRoleEnum;
 import com.stephen.trajectory.model.vo.LoginUserVO;
 import com.stephen.trajectory.model.vo.UserVO;
 import com.stephen.trajectory.service.UserService;
+import com.stephen.trajectory.utils.redisson.lock.LockUtils;
 import com.stephen.trajectory.utils.regex.RegexUtils;
 import com.stephen.trajectory.utils.sql.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,9 +45,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
-	
-	@Resource
-	private RedisTemplate<String, Object> redisTemplate;
 	
 	/**
 	 * 校验数据
@@ -111,28 +109,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		if (!userPassword.equals(checkPassword)) {
 			throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入的密码不一致");
 		}
-		synchronized (userAccount.intern()) {
+		return LockUtils.lockEvent(userAccount.intern(), () -> {
 			// 账户不能重复
 			QueryWrapper<User> queryWrapper = new QueryWrapper<>();
 			queryWrapper.eq("userAccount", userAccount);
 			long count = this.baseMapper.selectCount(queryWrapper);
-			if (count > 0) {
-				throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
-			}
+			ThrowUtils.throwIf(count > 0, ErrorCode.PARAMS_ERROR, "用户账号重复");
 			// 2. 加密
 			String encryptPassword = DigestUtils.md5DigestAsHex((SaltConstant.SALT + userPassword).getBytes());
 			// 3. 插入数据
 			User user = new User();
 			user.setUserAccount(userAccount);
 			user.setUserPassword(encryptPassword);
-			// 3. 给用户分配一个默认的头像
-			user.setUserAvatar(Optional.ofNullable(user.getUserAvatar()).orElse(UserConstant.USER_AVATAR));
 			boolean saveResult = this.save(user);
 			if (!saveResult) {
 				throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");
 			}
 			return user.getId();
-		}
+		}, () -> {
+			throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，请重试");
+		});
 	}
 	
 	/**
@@ -312,7 +308,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		// 填充信息
 		List<UserVO> userVOList = userList.stream().map(UserVO::objToVo).collect(Collectors.toList());
 		userVOPage.setRecords(userVOList);
-		
 		return userVOPage;
 	}
 	
@@ -338,7 +333,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 		List<String> tagList = userQueryRequest.getTags();
 		String searchText = userQueryRequest.getSearchText();
 		QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-		
 		// 遍历查询
 		if (CollUtil.isNotEmpty(tagList)) {
 			for (String tag : tagList) {
